@@ -22,6 +22,26 @@ For SA Masters IoT project sound detection and C-UAC
 	- [Device registration](#device-registration)
 	- [Device sends telemetry](#device-sends-telemetry)
 	- [User queries data](#user-queries-data)
+- [Non-Functional Requerements](#non-functional-requerements)
+	- [NFR-01: Performance](#nfr-01-performance)
+	- [NFR-02: Scalability](#nfr-02-scalability)
+	- [NFR-03: Availability](#nfr-03-availability)
+	- [NFR-04: Reliability](#nfr-04-reliability)
+	- [NFR-05: Security](#nfr-05-security)
+	- [NFR-06: Privacy/Compliance](#nfr-06-privacycompliance)
+	- [NFR-07: Interoperability](#nfr-07-interoperability)
+	- [NFR-08: Observability](#nfr-08-observability)
+	- [NFR-09: Cost](#nfr-09-cost)
+	- [NFR-10: Maintainability](#nfr-10-maintainability)
+	- [NFR-11: Portability](#nfr-11-portability)
+	- [NFR-12: Data Quality](#nfr-12-data-quality)
+- [Components of architecture](#components-of-architecture)
+	- [High-Level System Architecture](#high-level-system-architecture)
+	- [System Components View](#system-components-view)
+	- [Package Diagram](#package-diagram)
+	- [Multi-Cloud Cross-Platform Deployment](#multi-cloud-cross-platform-deployment)
+	- [Azure Cloud Architecture](#azure-cloud-architecture)
+	- [AWS Cloud Architecture](#aws-cloud-architecture)
 - [References](#references)
 
 
@@ -185,10 +205,13 @@ Priority: Should; Risk: Med (mitigation: ML preprocessing).
 ### Package Diagram
 ![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Package-Diagram-of-sUAV.png)
 
-## Azure Cloud Architecture
+### Multi-Cloud Cross-Platform Deployment
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Package-Diagram-of-sUAV.png)
+
+### Azure Cloud Architecture
 [Architecture](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Azure/azure_architecture.md)
 
-## AWS Cloud Architecture 
+### AWS Cloud Architecture 
 [Architecture](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/AWS/aws_architecture.md)
 
 
