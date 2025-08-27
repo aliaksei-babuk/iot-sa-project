@@ -1,3 +1,5 @@
+For SA Masters IoT project sound detection and C-UAC
+
 ## Components
 
 - [Overview](#overview)
@@ -14,7 +16,7 @@
 	- [FR-10: Failure Handling](#fr-10-failure-handling)
 - [Use cases](#use-cases)
 - [References](#references)
-For SA Masters IoT project sound detection and C-UAC 
+
 
 ## Overview
 Research on serverless cloud architectures for sound analytics and drone detection in IoT contexts has grown, driven by the need for scalable, low-latency processing of acoustic data from edge devices. Serverless computing, often implemented via Function-as-a-Service (FaaS), enables event-driven execution where functions are triggered by IoT sensor data (e.g., audio streams from microphones on drones or ground sensors), scaling automatically without infrastructure management. However, direct integrations of serverless with acoustic drone detection remain emerging, with most studies focusing on related areas: serverless in IoT for edge analytics, acoustic-based drone detection using ML/IoT, and general serverless challenges.
@@ -94,8 +96,14 @@ Acceptance Criteria: 99% recovery rate; no data loss.
 ### Drone Detection and Alerting
 ![Drone Detection and Alerting](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Use%20Case%20Diagram%20for%20Drone%20Detection%20and%20Alerting.png)
 
+## Flowcharts
 
-
+### device registration
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/device-registration-Flowchart-initial.svg)
+### Device sends telemetry
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Device-sends-telemetry-Flowchart-initial.svg)
+### User queries data
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/User-queries-data-Flowchart-initial.svg)
 
 ## References 
 Data pipeline approaches in serverless computing: a taxonomy, review, and research trends
