@@ -1,4 +1,19 @@
-[[_TOC_]]
+## Components
+
+- [Overview](#overview)
+- [Functional Requerements](#functional-requerements)
+	- [FR-01: Device Onboarding](#fr-01-device-onboarding)
+	- [FR-02: Secure Communications](#fr-02-secure-communications)
+	- [FR-03: Data Ingestion](#fr-03-data-ingestion)
+	- [FR-04: Data Validation](#fr-04-data-validation)
+	- [FR-05: Data Storage](#fr-05-data-storage)
+	- [FR-06: Analytics and Alerts](#fr-06-analytics-and-alerts)
+	- [FR-07: Dashboards and APIs](#fr-07-dashboards-and-apis)
+	- [FR-08: Data Lifecycle Management](#fr-08-data-lifecycle-management)
+	- [FR-09: Admin and RBAC](#fr-09-admin-and-rbac)
+	- [FR-10: Failure Handling](#fr-10-failure-handling)
+- [Use cases](#use-cases)
+- [References](#references)
 For SA Masters IoT project sound detection and C-UAC 
 
 ## Overview
@@ -72,12 +87,16 @@ Acceptance Criteria: 99% recovery rate; no data loss.
 
 ## Use cases
 
-General system work
+### General system work
 ![General system work](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Cloud%20IoT%20System%20%E2%80%93%20Use%20Case.png)
-Device Lifecycle
+### Device Lifecycle
 ![Device Lifecycle](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Device%20Lifecycle%20Use%20Cases.png)
-Drone Detection and Alerting
+### Drone Detection and Alerting
 ![Drone Detection and Alerting](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Use%20Case%20Diagram%20for%20Drone%20Detection%20and%20Alerting.png)
+
+
+
+
 ## References 
 Data pipeline approaches in serverless computing: a taxonomy, review, and research trends
 https://journalofbigdata.springeropen.com/articles/10.1186/s40537-024-00939-0?utm_source=chatgpt.com
