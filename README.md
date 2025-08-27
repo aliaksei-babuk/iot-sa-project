@@ -206,7 +206,14 @@ Priority: Should; Risk: Med (mitigation: ML preprocessing).
 ![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Package-Diagram-of-sUAV.png)
 
 ### Multi-Cloud Cross-Platform Deployment
-![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Package-Diagram-of-sUAV.png)
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Multi-Cloud%20Cross-Platform%20Deployment.png)
+
+Multi-Cloud Features:
+- Unified API Layer: Abstraction across AWS Lambda, Azure Functions, and Google Cloud Functions
+- Knative Orchestration: Kubernetes-native serverless for vendor independence
+- Cross-Cloud Data Replication: Synchronized storage across providers
+- Failover Mechanisms: Automatic switching between cloud providers
+- Vendor-Agnostic Monitoring: Unified observability across platforms
 
 ### Azure Cloud Architecture
 [Architecture](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Azure/azure_architecture.md)
