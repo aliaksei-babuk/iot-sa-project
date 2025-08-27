@@ -202,6 +202,10 @@ Priority: Should; Risk: Med (mitigation: ML preprocessing).
 ### System Components View
 ![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/System%20Components%20View.png)
 
+### Detailed Serverless Components Architecture
+
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/System%20Components%20View.png)
+
 ### Package Diagram
 ![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Package-Diagram-of-sUAV.png)
 
