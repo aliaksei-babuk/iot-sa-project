@@ -38,6 +38,7 @@ For SA Masters IoT project sound detection and C-UAC
 - [Components of architecture](#components-of-architecture)
 	- [High-Level System Architecture](#high-level-system-architecture)
 	- [System Components View](#system-components-view)
+	- [Detailed Serverless Components Architecture](#detailed-serverless-components-architecture)
 	- [Package Diagram](#package-diagram)
 	- [Multi-Cloud Cross-Platform Deployment](#multi-cloud-cross-platform-deployment)
 	- [Azure Cloud Architecture](#azure-cloud-architecture)
