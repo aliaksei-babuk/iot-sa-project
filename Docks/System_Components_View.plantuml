@@ -1,0 +1,22 @@
+@startuml
+title System Components View for Acoustic Drone Detection in Cloud IoT
+component "Acoustic Sensor" as Sensor
+component "IoT Node/Microcontroller" as Node
+component "Gateway (LoRaWAN/Wi-Fi)" as Gateway
+component "Cloud Ingestion Service" as Ingest
+component "Serverless Functions" as Functions
+component "ML Analytics (CNN)" as ML
+component "Storage Database" as Storage
+component "Alerting Service" as Alert
+component "Drone Control System" as DroneCtrl
+component "User Dashboard" as Dashboard
+Sensor --> Node : captures sound
+Node --> Gateway : transmits data
+Gateway --> Ingest : sends to cloud
+Ingest --> Functions : triggers
+Functions --> ML : processes
+ML --> Storage : stores results
+ML --> Alert : if detected
+Alert --> DroneCtrl : dispatches
+Alert --> Dashboard : notifies
+@enduml
