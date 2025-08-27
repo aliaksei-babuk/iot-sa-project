@@ -15,6 +15,13 @@ For SA Masters IoT project sound detection and C-UAC
 	- [FR-09: Admin and RBAC](#fr-09-admin-and-rbac)
 	- [FR-10: Failure Handling](#fr-10-failure-handling)
 - [Use cases](#use-cases)
+	- [General system work](#general-system-work)
+	- [Device Lifecycle](#device-lifecycle)
+	- [Drone Detection and Alerting](#drone-detection-and-alerting)
+- [Flowcharts](#flowcharts)
+	- [Device registration](#device-registration)
+	- [Device sends telemetry](#device-sends-telemetry)
+	- [User queries data](#user-queries-data)
 - [References](#references)
 
 
@@ -98,12 +105,88 @@ Acceptance Criteria: 99% recovery rate; no data loss.
 
 ## Flowcharts
 
-### device registration
+### Device registration
 ![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/device-registration-Flowchart-initial.svg)
 ### Device sends telemetry
 ![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Device-sends-telemetry-Flowchart-initial.svg)
 ### User queries data
 ![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/User-queries-data-Flowchart-initial.svg)
+
+## Non-Functional Requerements 
+
+### NFR-01: Performance
+Target/Metric: p95 end-to-end ingest latency ≤ 100ms at 100 events/sec.
+Verification: Benchmark tests with simulated loads.
+Priority: Must; Risk: High (mitigation: optimize serverless cold starts).
+
+### NFR-02: Scalability
+Target/Metric: Auto-scale to 10,000 devices without degradation (>99% throughput).
+Verification: Load testing in hybrid cloud.
+Priority: Must; Risk: Med (mitigation: use container orchestration).
+
+### NFR-03: Availability
+Target/Metric: 99.9% uptime, multi-region failover <1min.
+Verification: Chaos engineering tests.
+Priority: Must; Risk: High (mitigation: redundant deployments).
+
+### NFR-04: Reliability
+Target/Metric: <0.1% data loss, with idempotency and retries.
+Verification: Fault injection simulations.
+Priority: Must; Risk: Med (mitigation: DLQs).
+
+### NFR-05: Security
+Target/Metric: mTLS enforcement, zero trust; no vulnerabilities in OWASP top 10.
+Verification: Pen-tests and audits.
+Priority: Must; Risk: High (mitigation: regular scans).
+
+### NFR-06: Privacy/Compliance
+Target/Metric: GDPR compliant; anonymize PII in audio data.
+Verification: Conformance audits.
+Priority: Must; Risk: High (mitigation: data masking tools).
+
+### NFR-07: Interoperability
+Target/Metric: Support MQTT/HTTP/AMQP; unified API for cross-cloud.
+Verification: Integration tests across AWS/Azure/GCP.
+Priority: Should; Risk: Med (mitigation: abstraction layers).
+
+### NFR-08: Observability
+Target/Metric: Full metrics/logs/traces; queryable in <5s.
+Verification: Monitoring dashboard validation.
+Priority: Should; Risk: Low (mitigation: open-source tools).
+
+### NFR-09: Cost
+Target/Metric: ≤ $0.01 per event processed.
+Verification: Monthly cost reports.
+Priority: Could; Risk: Low (mitigation: auto-scaling).
+
+### NFR-10: Maintainability
+Target/Metric: Code modularity; deploy updates <5min downtime.
+Verification: CI/CD pipeline tests.
+Priority: Should; Risk: Low (mitigation: microservices).
+
+### NFR-11: Portability
+Target/Metric: Migrate between clouds <1hr; no vendor-specific code.
+Verification: Cross-platform deployment tests.
+Priority: Must; Risk: High (mitigation: unified API).
+
+### NFR-12: Data Quality
+Target/Metric: >98% accuracy in validation; handle noisy audio.
+Verification: Sample audits.
+Priority: Should; Risk: Med (mitigation: ML preprocessing).
+
+## Components of architecture
+
+### High-Level System Architecture
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/High-Level%20System%20Architecture.png)
+
+### System Components View
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/System%20Components%20View.png)
+
+### Package Diagram
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Package-Diagram-of-sUAV.png)
+
+## Azure Cloud Architecture
+## AWS Cloud Architecture 
 
 ## References 
 Data pipeline approaches in serverless computing: a taxonomy, review, and research trends
