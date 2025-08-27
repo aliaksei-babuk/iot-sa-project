@@ -73,9 +73,11 @@ Acceptance Criteria: 99% recovery rate; no data loss.
 ## Use cases
 
 General system work
+![General system work](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Cloud%20IoT%20System%20%E2%80%93%20Use%20Case.png)
 Device Lifecycle
+![Device Lifecycle](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Device%20Lifecycle%20Use%20Cases.png)
 Drone Detection and Alerting
-
+![Device Lifecycle](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Use%20Case%20Diagram%20for%20Drone%20Detection%20and%20Alerting.png)
 ## References 
 Data pipeline approaches in serverless computing: a taxonomy, review, and research trends
 https://journalofbigdata.springeropen.com/articles/10.1186/s40537-024-00939-0?utm_source=chatgpt.com
