@@ -55,15 +55,9 @@ For SA Masters IoT project sound detection and C-UAC
 		- [NFR-11: Portability](#nfr-11-portability)
 		- [NFR-12: Data Quality](#nfr-12-data-quality)
 	- [2.5 Data flow](#25-data-flow)
-- [Components of Architecture](#components-of-architecture)
-	- [High-Level System Architecture](#high-level-system-architecture)
-	- [System Components View](#system-components-view)
-	- [Detailed Serverless Components Architecture](#detailed-serverless-components-architecture)
-	- [Package Diagram](#package-diagram)
-	- [Multi-Cloud Cross-Platform Deployment](#multi-cloud-cross-platform-deployment)
-	- [Azure Cloud Architecture](#azure-cloud-architecture)
-	- [AWS Cloud Architecture](#aws-cloud-architecture)
-- [References](#references)
+- [CHAPTER 3 Azure Cloud Architecture](#chapter-3-azure-cloud-architecture)
+- [CHAPTER 4 AWS Cloud Architecture](#chapter-4-aws-cloud-architecture)
+- [CHAPTER 5 References](#chapter-5-references)
 
 
 ## Overview
@@ -452,38 +446,15 @@ The data flow architecture of the serverless sound analytics system follows a so
 
 
 
-## Components of architecture
 
-### High-Level System Architecture
-![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/High-Level%20System%20Architecture.png)
 
-### System Components View
-![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/System%20Components%20View.png)
-
-### Detailed Serverless Components Architecture
-
-![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Detailed%20Serverless%20Components%20Architecture.png)
-
-### Package Diagram
-![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Package-Diagram-of-sUAV.png)
-
-### Multi-Cloud Cross-Platform Deployment
-![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Multi-Cloud%20Cross-Platform%20Deployment.png)
-
-Multi-Cloud Features:
-- Unified API Layer: Abstraction across AWS Lambda, Azure Functions, and Google Cloud Functions
-- Knative Orchestration: Kubernetes-native serverless for vendor independence
-- Cross-Cloud Data Replication: Synchronized storage across providers
-- Failover Mechanisms: Automatic switching between cloud providers
-- Vendor-Agnostic Monitoring: Unified observability across platforms
-
-### Azure Cloud Architecture
+## CHAPTER 3 Azure Cloud Architecture
 [Architecture](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Azure/azure_architecture.md)
 
-### AWS Cloud Architecture 
+## CHAPTER 4 AWS Cloud Architecture 
 [Architecture](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/AWS/aws_architecture.md)
 
 
-## References 
+## CHAPTER 5 References 
 Data pipeline approaches in serverless computing: a taxonomy, review, and research trends
 https://journalofbigdata.springeropen.com/articles/10.1186/s40537-024-00939-0?utm_source=chatgpt.com
