@@ -1,25 +1,36 @@
-# IoT Sound Detection and Drone Detection POC
+# Cloud-Native Serverless Sound Analytics POC
 
-A proof-of-concept application for IoT sound detection and drone detection using serverless cloud architectures. This application provides a complete backend system for managing IoT devices, processing audio data, and detecting drones using machine learning.
+A comprehensive proof-of-concept application for real-time sound analytics in IoT environments using cloud-native serverless architectures. This application provides a complete backend system for managing IoT devices, processing audio data, and performing advanced sound analysis across multiple use cases including traffic monitoring, siren detection, noise mapping, industrial monitoring, and wildlife tracking.
 
 ## Features
 
 ### Core Functionality
-- **Device Management**: Register, manage, and monitor IoT devices (drones, sensors, gateways)
-- **Data Ingestion**: Receive telemetry data via HTTP and MQTT protocols
-- **Audio Processing**: Upload and process audio files for drone detection
-- **ML Analytics**: Real-time sound analysis and drone detection using machine learning
-- **Alert System**: Generate alerts for drone detections and system anomalies
-- **REST API**: Comprehensive REST API for all operations
+- **Multi-Use Case Support**: Traffic monitoring, siren detection, noise mapping, industrial monitoring, wildlife tracking
+- **Device Management**: Register, manage, and monitor IoT devices across multiple use cases
+- **Data Ingestion**: Receive telemetry data via HTTP and MQTT protocols with backpressure handling
+- **Audio Processing**: Advanced audio analysis with feature extraction and ML classification
+- **ML Analytics**: Real-time sound analysis using specialized models for each use case
+- **Alert System**: Intelligent alert generation with severity levels and escalation
+- **REST API**: Comprehensive REST API with automatic documentation
+- **Unified Analysis**: Cross-use case analysis capabilities
 
 ### Technical Features
 - **Multi-Protocol Support**: HTTP, MQTT, and WebSocket communication
-- **Authentication & Authorization**: JWT tokens and API key authentication
-- **Database**: PostgreSQL with SQLAlchemy ORM
-- **Caching**: Redis for session management and caching
+- **Authentication & Authorization**: JWT tokens, API key authentication, and RBAC
+- **Database**: PostgreSQL with SQLAlchemy ORM and connection pooling
+- **Caching**: Redis for session management, caching, and message queuing
 - **Background Processing**: Automated audio processing and device monitoring
-- **Monitoring**: Prometheus metrics and health checks
-- **Containerization**: Docker and Docker Compose support
+- **Monitoring**: Prometheus metrics, Grafana dashboards, and comprehensive observability
+- **NFR Compliance**: Built-in monitoring and validation of non-functional requirements
+- **Multi-Cloud Support**: AWS, Azure, and GCP deployment capabilities
+- **Containerization**: Docker and Docker Compose with health checks
+
+### Use Cases
+1. **Traffic Monitoring**: Real-time traffic flow analysis, congestion detection, and incident identification
+2. **Siren Detection**: Emergency vehicle siren detection with geolocation and priority routing
+3. **Noise Mapping**: Urban noise level monitoring and compliance reporting
+4. **Industrial Monitoring**: Machinery anomaly detection and predictive maintenance
+5. **Wildlife Monitoring**: Species identification and biodiversity tracking
 
 ## Architecture
 

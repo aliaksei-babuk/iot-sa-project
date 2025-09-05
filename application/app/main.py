@@ -10,7 +10,7 @@ from app.config import settings
 from app.services.database import db_service
 from app.services.mqtt_service import mqtt_service
 from app.services.background_tasks import background_tasks
-from app.api.routers import devices, telemetry, alerts, analytics, mqtt, auth, metrics
+from app.api.routers import devices, telemetry, alerts, analytics, mqtt, auth, metrics, use_cases, monitoring
 
 # Configure logging
 logging.basicConfig(
@@ -99,6 +99,8 @@ app.include_router(analytics.router)
 app.include_router(mqtt.router)
 app.include_router(auth.router)
 app.include_router(metrics.router)
+app.include_router(use_cases.router)
+app.include_router(monitoring.router)
 
 
 @app.get("/")

@@ -13,9 +13,15 @@ services:
       - MQTT_PORT=1883
       - SECRET_KEY=your-secret-key-change-in-production
       - DEBUG=false
+      - ENABLE_METRICS=true
+      - PROMETHEUS_ENABLED=true
+      - GRAFANA_ENABLED=true
+      - MULTI_CLOUD_ENABLED=true
+      - NFR_COMPLIANCE_ENABLED=true
     volumes:
       - ./storage:/app/storage
       - ./logs:/app/logs
+      - ./test_data:/app/test_data
     depends_on:
       - postgres
       - redis
@@ -23,6 +29,12 @@ services:
     networks:
       - iot-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # PostgreSQL database
   postgres:
