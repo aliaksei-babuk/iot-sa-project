@@ -15,6 +15,7 @@ For SA Masters IoT project sound detection and C-UAC
 	- [Use Case 3: Urban Noise Mapping](#use-case-3-urban-noise-mapping)
 	- [Use Case 4: Industrial Acoustic Monitoring](#use-case-4-industrial-acoustic-monitoring)
 	- [Use Case 5: Environmental and Wildlife Monitoring](#use-case-5-environmental-and-wildlife-monitoring)
+- [System limitations](#system-limitations)
 - [Functional Requirements](#functional-requerements)
 	- [FR-01: Device Onboarding](#fr-01-device-onboarding)
 	- [FR-02: Secure Communications](#fr-02-secure-communications)
@@ -140,38 +141,73 @@ The real-time traffic monitoring use case (UC-1) is designed to support urban mo
 ### Use Case 2: Public-Safety Siren Detection
 | Field |	Description |
 |------|------------------|
-|Actors|City operators, traffic management systems|
-|Preconditions||
-|Basic Flow||
-|Postconditions||
-|Primary Benefit||
+|Actors|Emergency dispatch centers, law enforcement agencies|
+|Preconditions|Continuous audio ingestion from urban microphones with connectivity to the serverless pipeline.|
+|Basic Flow|Audio snippets are processed for siren patterns, and the CNN model classifies the presence of emergency vehicles. A geolocation service annotates events and triggers real-time alerts.|
+|Postconditions|Dispatchers obtain actionable notifications to optimize response routing and prioritize critical interventions.|
+|Primary Benefit|Faster emergency response and improved situational awareness during crises.|
+
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Flow%20Chart%20for%20the%20UC-2.png)
+
+The public-safety siren detection use case addresses the need for rapid identification and localization of emergency vehicles in dense urban environments. The main flow involves real-time ingestion of acoustic signals, detection of siren patterns through CNN-based classification, and geolocation annotation of events for dispatch centers. This automated pipeline minimizes reliance on manual reporting and reduces delays in emergency response coordination. Possible exceptions may include false positives triggered by acoustically similar events (e.g., construction noise) or degraded accuracy in high-noise urban corridors. However, the benefits are distributed across multiple stakeholders: dispatch operators gain actionable alerts that improve response routing, emergency services experience reduced arrival times at incident sites, and citizens benefit from faster and more reliable public-safety interventions
 
 ### Use Case 3: Urban Noise Mapping
 | Field |	Description |
 |------|------------------|
-|Actors|City operators, traffic management systems|
-|Preconditions||
-|Basic Flow||
-|Postconditions||
-|Primary Benefit||
+|Actors|Environmental agencies, urban planners|
+|Preconditions|Continuous collection of audio data across multiple city zones.|
+|Basic Flow|The architecture processes incoming streams, estimates sound pressure levels (SPL) and aggregated measures such as Leq, and generates spatiotemporal heatmaps. Data are stored in cloud repositories for long-term trend analysis.|
+|Postconditions|Agencies gain access to regulatory compliance reports and interactive dashboards for policy design.|
+|Primary Benefit|Evidence-driven strategies to mitigate noise pollution and improve quality of life.|
+
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Flow%20Chart%20for%20the%20UC-3.png)
+
+Urban noise mapping exemplifies the integration of acoustic analytics into regulatory and planning contexts. The main flow involves continuous ingestion of environmental sound, computation of aggregated acoustic indices (e.g., SPL, Leq), and spatial visualization through temporal heatmaps. These outputs provide regulators and urban planners with empirical insights into noise patterns across city zones. Exceptions may occur in the form of incomplete coverage due to sensor deployment constraints, calibration drift in edge devices, or temporary loss of connectivity between IoT endpoints and the cloud pipeline. The benefits, however, are substantial: environmental agencies gain robust compliance reports for enforcement, municipal governments can design targeted noise mitigation strategies, and citizens indirectly benefit from improved quality of life through better noise control policies
 
 ### Use Case 4: Industrial Acoustic Monitoring
 | Field |	Description |
 |------|------------------|
-|Actors|City operators, traffic management systems|
-|Preconditions||
-|Basic Flow||
-|Postconditions||
-|Primary Benefit||
+|Actors|Industrial plant operators, maintenance engineers|
+|Preconditions|Microphones or sensors installed in factory floors or machinery environments.|
+|Basic Flow|Real-time streaming detects abnormal acoustic signatures via CNN inference. Detected anomalies trigger proactive alerts and logs are archived for diagnostic analysis.|
+|Postconditions|Maintenance teams are informed about potential failures before they escalate.|
+|Primary Benefit|Reduced downtime and improved operational efficiency through predictive maintenance.|
+
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Flow%20Chart%20for%20the%20UC-4.png)
+
+Industrial acoustic monitoring applies real-time sound analytics to manufacturing and production environments. The main flow entails capturing machinery sound signatures, extracting spectral features, and detecting anomalies indicative of early equipment failure. Alerts are generated and stored for diagnostic use, providing maintenance teams with actionable insights. Potential exceptions include false alarms triggered by temporary operational variations (e.g., tool changes or non-critical vibrations) or failure to detect anomalies when background noise masks the acoustic patterns of interest. Despite these risks, the benefits are clear: plant operators reduce unplanned downtime, maintenance engineers improve efficiency through predictive scheduling, and management achieves cost savings and improved safety. The same framework also supports industrial compliance with health and safety regulations
 
 ### Use Case 5: Environmental and Wildlife Monitoring
 | Field |	Description |
 |------|------------------|
-|Actors|City operators, traffic management systems|
-|Preconditions||
-|Basic Flow||
-|Postconditions||
-|Primary Benefit||
+|Actors|Ecologists, conservation agencies|
+|Preconditions|Edge devices deployed in natural habitats with connectivity to the cloud.|
+|Basic Flow|The system ingests environmental sounds, identifies species or specific ecological events, and stores annotated data in cloud repositories. Periodic analytics generate biodiversity indicators.|
+|Postconditions|Conservation teams receive validated data that support ecological studies and conservation strategies.|
+|Primary Benefit|Non-intrusive monitoring of biodiversity and evidence-based conservation actions.|
+
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Flow%20Chart%20for%20the%20UC-5.png)
+
+Environmental and Wildlife Monitoring  use case extends the solution into ecological research and biodiversity conservation. The main flow consists of ingesting environmental acoustic data from edge devices in natural habitats, identifying species or ecological events, and storing annotated data for long-term analysis. Outputs are used to track species presence, migration, and overall ecosystem health. Exceptions may arise from limited connectivity in remote regions, misclassification of overlapping animal sounds, or environmental conditions (e.g., storms) obscuring audio signals. Nonetheless, the benefits are multifaceted: ecologists gain a scalable and non-intrusive method of monitoring wildlife, conservation agencies access high-quality datasets for biodiversity assessments, and policymakers benefit from evidence-based recommendations for environmental protection
+
+## System limitations
+
+Across all five use cases—Traffic Monitoring (U1), Siren Detection (U2), Noise Mapping (U3), Industrial Acoustic Monitoring (U4), and Environmental & Wildlife Monitoring (U5)—exception handling is essential to maintain the reliability, validity, and operational resilience of the serverless sound analytics pipeline. Although each domain introduces specific contingencies, several categories of exceptions can be generalized.
+#### 1. Data Integrity and Payload Validation
+In all scenarios, corrupted or incomplete ingestion payloads represent a fundamental exception. These may arise from device malfunction, network packet loss, or encoding errors. The system applies strict schema validation, rejecting invalid frames while logging events for later inspection. This ensures that downstream models are not exposed to unreliable inputs.
+#### 2. Sensor Degradation and Calibration Drift
+Environmental sensors, industrial microphones, and traffic detectors are all vulnerable to hardware wear, environmental contamination (dust, moisture), or calibration loss. Exceptions of this type are managed by cross-sensor consistency checks, self-diagnostic routines, and exclusion of suspect data. This preserves analytic quality across the full use-case spectrum.
+#### 3. Acoustic Ambiguity and Masking Effects
+Whether in urban streets, factories, or wildlife habitats, overlapping sound sources often produce ambiguous signals. Common confounders include background noise (wind, rain), transient bursts (construction, fireworks), and acoustic look-alikes (musical sirens, species calls). Exceptions of this type are mitigated via confidence thresholds, persistence rules (N-of-M verification), and secondary classification passes.
+#### 4. Latency Breaches and System Backpressure
+Since all use cases are real-time in nature, exceeding the end-to-end latency service-level objective (SLO) is a critical exception. Backpressure may arise from bursty workloads (e.g., >10k req/s in U1) or unexpected event surges (e.g., mass siren activations in U2). Exception handling relies on dynamic autoscaling policies, workload shedding of non-critical tasks, and graceful degradation (e.g., widening aggregation windows).
+#### 5. Model Drift and Misclassification
+All use cases depend on machine learning classifiers. Over time, acoustic distributions shift due to seasonal patterns, machinery wear, or evolving urban soundscapes. Drift manifests as increased false positives or false negatives. Exceptions are managed through continuous monitoring of classification confidence, scheduled retraining, and human-in-the-loop validation for borderline cases.
+#### 6. Connectivity Loss and Sparse Coverage
+Field-deployed IoT sensors frequently operate under constrained connectivity. Exceptions occur when network outages delay or prevent data arrival. To mitigate this, the system incorporates tolerance for late-arriving data, interpolates across neighboring sensors, and generates sensor health alerts when coverage gaps persist.
+#### 7. Governance, Safety, and Compliance Exceptions
+Some exceptions are regulatory or safety-related, rather than purely technical. For example, triggering a false road-closure alert (U2) or a premature industrial shutdown (U4) carries socio-economic risks. To prevent cascading errors, these exceptions are addressed with dual-verification protocols, escalation to human operators, and comprehensive audit logging.
+
 
 ## Functional Requerements 
 ### FR-01: Device Onboarding
