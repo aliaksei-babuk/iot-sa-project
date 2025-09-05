@@ -3,44 +3,58 @@ For SA Masters IoT project sound detection and C-UAC
 ## Table of Contents
 
 - [Overview](#overview)
-- [Solution Intent](#solution-intent)
-	- [Business Context & Vision](#business-context--vision-solution-intent)
-	- [Stakeholders & Benefits](#stakeholders--benefits)
-	- [Core Value Proposition](#core-value-proposition)
-	- [High Level Use Case Domains](#high-level-use-case-domains)
-- [Users specification](#users-specification)
-- [Use Journey definition](#use-journey-definition)
-	- [Use Case 1: Real-Time Traffic Monitoring](#use-case-1-real-time-traffic-monitoring)
-	- [Use Case 2: Public-Safety Siren Detection](#use-case-2-public-safety-siren-detection)
-	- [Use Case 3: Urban Noise Mapping](#use-case-3-urban-noise-mapping)
-	- [Use Case 4: Industrial Acoustic Monitoring](#use-case-4-industrial-acoustic-monitoring)
-	- [Use Case 5: Environmental and Wildlife Monitoring](#use-case-5-environmental-and-wildlife-monitoring)
-- [System limitations](#system-limitations)
-- [Functional Requirements](#functional-requerements)
-	- [FR-01: Device Onboarding](#fr-01-device-onboarding)
-	- [FR-02: Secure Communications](#fr-02-secure-communications)
-	- [FR-03: Data Ingestion](#fr-03-data-ingestion)
-	- [FR-04: Data Validation](#fr-04-data-validation)
-	- [FR-05: Data Storage](#fr-05-data-storage)
-	- [FR-06: Analytics and Alerts](#fr-06-analytics-and-alerts)
-	- [FR-07: Dashboards and APIs](#fr-07-dashboards-and-apis)
-	- [FR-08: Data Lifecycle Management](#fr-08-data-lifecycle-management)
-	- [FR-09: Admin and RBAC](#fr-09-admin-and-rbac)
-	- [FR-10: Failure Handling](#fr-10-failure-handling)
-- [Flowcharts](#flowcharts)
-- [Non-Functional Requirements](#non-functional-requerements)
-	- [NFR-01: Performance](#nfr-01-performance)
-	- [NFR-02: Scalability](#nfr-02-scalability)
-	- [NFR-03: Availability](#nfr-03-availability)
-	- [NFR-04: Reliability](#nfr-04-reliability)
-	- [NFR-05: Security](#nfr-05-security)
-	- [NFR-06: Privacy/Compliance](#nfr-06-privacycompliance)
-	- [NFR-07: Interoperability](#nfr-07-interoperability)
-	- [NFR-08: Observability](#nfr-08-observability)
-	- [NFR-09: Cost](#nfr-09-cost)
-	- [NFR-10: Maintainability](#nfr-10-maintainability)
-	- [NFR-11: Portability](#nfr-11-portability)
-	- [NFR-12: Data Quality](#nfr-12-data-quality)
+- [CHAPTER 1 Solution Intent](#chapter-1-solution-intent)
+	- [1.1 Business Context & Vision (Solution Intent)](#11-business-context--vision-solution-intent)
+		- [1.1.1 Stakeholders & Benefits](#111-stakeholders--benefits)
+		- [1.1.2 Core Value Proposition](#112-core-value-proposition)
+		- [1.1.3 High Level Use Case Domains](#113-high-level-use-case-domains)
+		- [1.1.4 Users specification](#114-users-specification)
+	- [1.2 Use Journey definition](#12-use-journey-definition)
+		- [1.2.1 Use Case 1: Real-Time Traffic Monitoring](#121-use-case-1-real-time-traffic-monitoring)
+		- [1.2.2 Use Case 2: Public-Safety Siren Detection](#122-use-case-2-public-safety-siren-detection)
+		- [1.2.3 Use Case 3: Urban Noise Mapping](#123-use-case-3-urban-noise-mapping)
+		- [1.2.4 Use Case 4: Industrial Acoustic Monitoring](#124-use-case-4-industrial-acoustic-monitoring)
+		- [1.2.5 Use Case 5: Environmental and Wildlife Monitoring](#125-use-case-5-environmental-and-wildlife-monitoring)
+	- [1.3 System limitations](#13-system-limitations)
+		- [1.3.1 Data Integrity and Payload Validation](#131-data-integrity-and-payload-validation)
+		- [1.3.2 Sensor Degradation and Calibration Drift](#132-sensor-degradation-and-calibration-drift)
+		- [1.3.3 Acoustic Ambiguity and Masking Effects](#133-acoustic-ambiguity-and-masking-effects)
+		- [1.3.4 Latency Breaches and System Backpressure](#134-latency-breaches-and-system-backpressure)
+		- [1.3.5 Model Drift and Misclassification](#135-model-drift-and-misclassification)
+		- [1.3.6 Connectivity Loss and Sparse Coverage](#136-connectivity-loss-and-sparse-coverage)
+		- [1.3.7 Governance, Safety, and Compliance Exceptions](#137-governance-safety-and-compliance-exceptions)
+- [CHAPTER 2 NON-FUNCTIONAL REQUIREMENTS AND ARCHITECTURAL DESIGN](#chapter-2-non-functional-requirements-and-architectural-design)
+	- [2.1 General architecture overview](#21-general-architecture-overview)
+	- [2.2 Architecture definition](#22-architecture-definition)
+		- [2.2.1 Component View diagram](#221-component-view-diagram)
+		- [2.2.2 UML Class diagram](#222-uml-class-diagram)
+		- [2.2.3 UML Sequence diagram](#223-uml-sequence-diagram)
+		- [2.2.4 Architecture Diagram](#224-architecture-diagram)
+	- [2.3 Functional Requirements](#23-functional-requerements)
+		- [FR-01: Device Onboarding](#fr-01-device-onboarding)
+		- [FR-02: Secure Communications](#fr-02-secure-communications)
+		- [FR-03: Data Ingestion](#fr-03-data-ingestion)
+		- [FR-04: Data Validation](#fr-04-data-validation)
+		- [FR-05: Data Storage](#fr-05-data-storage)
+		- [FR-06: Analytics and Alerts](#fr-06-analytics-and-alerts)
+		- [FR-07: Dashboards and APIs](#fr-07-dashboards-and-apis)
+		- [FR-08: Data Lifecycle Management](#fr-08-data-lifecycle-management)
+		- [FR-09: Admin and RBAC](#fr-09-admin-and-rbac)
+		- [FR-10: Failure Handling](#fr-10-failure-handling)
+	- [2.4 NFRs specification](#24-nfrs-specification)
+		- [NFR-01: Performance](#nfr-01-performance)
+		- [NFR-02: Scalability](#nfr-02-scalability)
+		- [NFR-03: Availability](#nfr-03-availability)
+		- [NFR-04: Reliability](#nfr-04-reliability)
+		- [NFR-05: Security](#nfr-05-security)
+		- [NFR-06: Privacy/Compliance](#nfr-06-privacycompliance)
+		- [NFR-07: Interoperability](#nfr-07-interoperability)
+		- [NFR-08: Observability](#nfr-08-observability)
+		- [NFR-09: Cost](#nfr-09-cost)
+		- [NFR-10: Maintainability](#nfr-10-maintainability)
+		- [NFR-11: Portability](#nfr-11-portability)
+		- [NFR-12: Data Quality](#nfr-12-data-quality)
+	- [2.5 Data flow](#25-data-flow)
 - [Components of Architecture](#components-of-architecture)
 	- [High-Level System Architecture](#high-level-system-architecture)
 	- [System Components View](#system-components-view)
@@ -60,17 +74,17 @@ Serverless in IoT for Analytics: Studies explore edge-fog-cloud hierarchies to p
 Sound Analytics for Drone Detection: Acoustic sensors capture drone propeller noise, processed via ML models (e.g., CNN, RNN) for detection and classification, often integrated with IoT networks.
 Architecture Features: Common features emphasize scalability, cost-efficiency, and integration with IoT/edge computing, but face portability hurdles.
 
-## Solution Intent
+# CHAPTER 1 Solution Intent
 
 To form an architectural design, first understand the content of the solution itself that is being designed. Since for educational purposes we do not plan to form a commercial solution, we will limit ourselves to its MVP-version. Therefore, in this issue, it is first necessary to determine the high-level requirements for the very idea (Solution Intent) of creating software for processing biometric information. For this, an approach to creating a Business Case was used, which involves formulating the main idea and global characteristics (Epics and Features) of the designed application. It is worth adding that due to certain limitations on the scope of the final qualification work, an abbreviated version of the business case was used.
 For this, the following milestones were identified for creating a solution and the corresponding justification of its architectural design: determining business requirements for creating a solution; justifying system requirements; forming an architectural design for the MVP-product model
 The subject area of the Solution design was chosen to be the field of work with Cloud‑Native Serverless Architecture for Real‑Time Sound Analytics in IoT. In recent years, it has been gaining increasing popularity. The use cases for software solutions providing the Real‑Time Sound Analytics in IoT are growing very rapidly. 
 
-### Business Context & Vision (Solution Intent)
+## 1.1 Business Context & Vision (Solution Intent)
 
 Real‑time analysis of environmental sound is critical for smart‑city scenarios such as traffic monitoring, public‑safety siren detection and urban noise mapping. However, the massive, highly‑variable sound event streams generated by distributed microphones and edge devices exceed the latency and cost envelopes of server‑centred architectures. This research proposes a cloud‑native serverless architecture that ingests, processes and analyses sound‑only IoT data with millisecond‑level end‑to‑end latency while maintaining pay‑per‑use cost efficiency. Building on recent advances in Function‑as‑a‑Service (FaaS), event‑driven pipelines and intelligent pre‑warming, we will design, implement and experimentally evaluate multi‑cloud prototypes on AWS Lambda and Azure Functions. Controlled workloads derived from UrbanSound8K, CitySoundscapes and ESC‑50 will be replayed through IoT simulators to benchmark cold‑start delay, throughput, accuracy of online audio classification and cost‑performance trade‑offs. Deep‑reinforcement‑learning (DRL) policies will be investigated for proactive scaling. The expected outcome is an empirically‑validated, cost‑aware orchestration blueprint and a set of open research artifacts (datasets, code, dashboards) that advance the state‑of‑the‑art in serverless audio analytics.
 
-### Stakeholders & Benefits
+### 1.1.1 Stakeholders & Benefits
 
 | Stakeholder | Key Benefits |
 |------|------------------|
@@ -82,11 +96,11 @@ Real‑time analysis of environmental sound is critical for smart‑city scenari
 
 The Stakeholders & Benefits identifies the main groups who would use or rely on the cloud-native serverless sound analytics solution and highlights the value each group receives. City operations and transportation departments benefit from live traffic characterization and congestion detection to improve planning and response. Public safety agencies gain rapid siren detection and automatic alerts that can shorten emergency response times. Urban planners and environmental authorities obtain noise mapping and compliance insights that inform long-term policy decisions. Finally, cloud engineering and research teams benefit from reproducible multi-cloud deployments, improved observability, and high-quality datasets for experimentation and innovation.
 
-### Core Value Proposition
+### 1.1.2 Core Value Proposition
 
 The proposed architecture is designed to achieve millisecond-level end-to-end latency, a requirement that ensures timely and reliable operational decision-making in real-time urban environments. Beyond latency, the system emphasizes elastic scalability, maintaining resilience under bursty workloads of up to 10,000 requests per second without resorting to costly over-provisioning. From an economic perspective, the architecture is guided by the principle of cost efficiency, achieved through a pay-per-use model complemented by intelligent pre-warming strategies and adaptive memory allocation. Finally, the solution prioritizes portability, providing a multi-cloud blueprint that leverages Infrastructure-as-Code (Terraform, AWS CDK, Azure Bicep) to ensure reproducibility and seamless deployment across heterogeneous cloud providers.
 
-### High Level Use Case Domains
+### 1.1.3 High Level Use Case Domains
 
 | Domain | Example Uses | Stakeholder Value |
 |------|------------------|------------------|
@@ -100,7 +114,7 @@ The table of high-level use case domains outlines the breadth of applicability f
 The urban noise mapping domain addresses the growing concern of environmental sound pollution by producing zonal measurements of sound pressure levels and aggregated temporal heatmaps. Such data are valuable not only for compliance and regulatory purposes but also for guiding urban planning strategies that aim to improve citizens’ quality of life. Beyond city governance, industrial sound monitoring constitutes another relevant domain, where acoustic signatures of machinery can be analyzed to detect anomalies and prevent breakdowns. This proactive form of monitoring can reduce downtime, lower maintenance costs, and contribute to predictive maintenance frameworks already in use across Industry 4.0 settings.
 Finally, the environmental and wildlife monitoring domain extends the scope of sound analytics to ecological applications. Acoustic event detection in natural habitats provides a non-intrusive means of tracking species presence, migration, and ecosystem health. Such insights are indispensable for conservation initiatives and biodiversity assessments, particularly in areas where traditional observation methods are impractical. Taken together, these use case domains illustrate the versatility and societal value of real-time sound analytics, demonstrating its potential to deliver both operational efficiency and long-term sustainability outcomes across diverse sectors.
 
-## Users specification
+### 1.1.4 Users specification
 
 The Users Specification table delineates the principal categories of stakeholders who will engage with the cloud-native serverless architecture for real-time sound analytics in IoT.
 
@@ -119,13 +133,13 @@ The fourth group, data scientists and AI researchers, depends on reproducible da
 Finally, industrial operators and environmental agencies constitute an extended but equally important user group. Industrial operators require predictive maintenance and anomaly detection in acoustic signatures of machinery, while environmental agencies depend on sound-based monitoring for regulatory compliance and ecological conservation. For both categories, the system provides advanced tools for anomaly detection, synthetic workload replay, and high-frequency metrics collection. These capabilities allow stakeholders to anticipate equipment failures, reduce downtime, and monitor biodiversity in non-intrusive ways.
 Taken together, the table illustrates the multi-stakeholder relevance of the proposed solution. It demonstrates that real-time sound analytics, when implemented via a serverless multi-cloud architecture, serves not only operational efficiency but also regulatory, scientific, and environmental objectives. By addressing the specific needs of diverse user groups, the architecture maximizes societal, economic, and scientific impact, positioning itself as a versatile and sustainable technological innovation.
 
-## Use Journey definition
+## 1.2 Use Journey definition
  
 Basic Uses Cases for the developed solution 
 ![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Use_case_specification.png)
 
 
-### Use Case 1: Real-Time Traffic Monitoring
+### 1.2.1 Use Case 1: Real-Time Traffic Monitoring
 | Field |	Description |
 |------|------------------|
 |Actors|City operators, traffic management systems|
@@ -138,7 +152,7 @@ Basic Uses Cases for the developed solution
 
 The real-time traffic monitoring use case (UC-1) is designed to support urban mobility management by leveraging continuous acoustic data streams from distributed road-side microphones. The main flow involves the ingestion of audio via the IoT Hub, feature extraction through librosa, and subsequent classification of traffic-related acoustic events (e.g., honking, congestion signatures) using pretrained CNN models. Results are aggregated into dashboards that allow city operators to make evidence-based interventions. Potential exceptions include network disruptions that may cause partial data loss, misclassification due to overlapping sound events, or cloud function cold-start delays that temporarily degrade responsiveness. Nevertheless, the benefits are significant: traffic management authorities gain timely indicators for congestion mitigation, law enforcement agencies can respond more effectively to incidents, and urban planners obtain longitudinal datasets that inform infrastructure design 
 
-### Use Case 2: Public-Safety Siren Detection
+### 1.2.2 Use Case 2: Public-Safety Siren Detection
 | Field |	Description |
 |------|------------------|
 |Actors|Emergency dispatch centers, law enforcement agencies|
@@ -151,7 +165,7 @@ The real-time traffic monitoring use case (UC-1) is designed to support urban mo
 
 The public-safety siren detection use case addresses the need for rapid identification and localization of emergency vehicles in dense urban environments. The main flow involves real-time ingestion of acoustic signals, detection of siren patterns through CNN-based classification, and geolocation annotation of events for dispatch centers. This automated pipeline minimizes reliance on manual reporting and reduces delays in emergency response coordination. Possible exceptions may include false positives triggered by acoustically similar events (e.g., construction noise) or degraded accuracy in high-noise urban corridors. However, the benefits are distributed across multiple stakeholders: dispatch operators gain actionable alerts that improve response routing, emergency services experience reduced arrival times at incident sites, and citizens benefit from faster and more reliable public-safety interventions
 
-### Use Case 3: Urban Noise Mapping
+### 1.2.3 Use Case 3: Urban Noise Mapping
 | Field |	Description |
 |------|------------------|
 |Actors|Environmental agencies, urban planners|
@@ -164,7 +178,7 @@ The public-safety siren detection use case addresses the need for rapid identifi
 
 Urban noise mapping exemplifies the integration of acoustic analytics into regulatory and planning contexts. The main flow involves continuous ingestion of environmental sound, computation of aggregated acoustic indices (e.g., SPL, Leq), and spatial visualization through temporal heatmaps. These outputs provide regulators and urban planners with empirical insights into noise patterns across city zones. Exceptions may occur in the form of incomplete coverage due to sensor deployment constraints, calibration drift in edge devices, or temporary loss of connectivity between IoT endpoints and the cloud pipeline. The benefits, however, are substantial: environmental agencies gain robust compliance reports for enforcement, municipal governments can design targeted noise mitigation strategies, and citizens indirectly benefit from improved quality of life through better noise control policies
 
-### Use Case 4: Industrial Acoustic Monitoring
+### 1.2.4 Use Case 4: Industrial Acoustic Monitoring
 | Field |	Description |
 |------|------------------|
 |Actors|Industrial plant operators, maintenance engineers|
@@ -177,7 +191,7 @@ Urban noise mapping exemplifies the integration of acoustic analytics into regul
 
 Industrial acoustic monitoring applies real-time sound analytics to manufacturing and production environments. The main flow entails capturing machinery sound signatures, extracting spectral features, and detecting anomalies indicative of early equipment failure. Alerts are generated and stored for diagnostic use, providing maintenance teams with actionable insights. Potential exceptions include false alarms triggered by temporary operational variations (e.g., tool changes or non-critical vibrations) or failure to detect anomalies when background noise masks the acoustic patterns of interest. Despite these risks, the benefits are clear: plant operators reduce unplanned downtime, maintenance engineers improve efficiency through predictive scheduling, and management achieves cost savings and improved safety. The same framework also supports industrial compliance with health and safety regulations
 
-### Use Case 5: Environmental and Wildlife Monitoring
+### 1.2.5 Use Case 5: Environmental and Wildlife Monitoring
 | Field |	Description |
 |------|------------------|
 |Actors|Ecologists, conservation agencies|
@@ -190,26 +204,51 @@ Industrial acoustic monitoring applies real-time sound analytics to manufacturin
 
 Environmental and Wildlife Monitoring  use case extends the solution into ecological research and biodiversity conservation. The main flow consists of ingesting environmental acoustic data from edge devices in natural habitats, identifying species or ecological events, and storing annotated data for long-term analysis. Outputs are used to track species presence, migration, and overall ecosystem health. Exceptions may arise from limited connectivity in remote regions, misclassification of overlapping animal sounds, or environmental conditions (e.g., storms) obscuring audio signals. Nonetheless, the benefits are multifaceted: ecologists gain a scalable and non-intrusive method of monitoring wildlife, conservation agencies access high-quality datasets for biodiversity assessments, and policymakers benefit from evidence-based recommendations for environmental protection
 
-## System limitations
+## 1.3 System limitations
 
 Across all five use cases—Traffic Monitoring (U1), Siren Detection (U2), Noise Mapping (U3), Industrial Acoustic Monitoring (U4), and Environmental & Wildlife Monitoring (U5)—exception handling is essential to maintain the reliability, validity, and operational resilience of the serverless sound analytics pipeline. Although each domain introduces specific contingencies, several categories of exceptions can be generalized.
-#### 1. Data Integrity and Payload Validation
+#### 1.3.1 Data Integrity and Payload Validation
 In all scenarios, corrupted or incomplete ingestion payloads represent a fundamental exception. These may arise from device malfunction, network packet loss, or encoding errors. The system applies strict schema validation, rejecting invalid frames while logging events for later inspection. This ensures that downstream models are not exposed to unreliable inputs.
-#### 2. Sensor Degradation and Calibration Drift
+#### 1.3.2 Sensor Degradation and Calibration Drift
 Environmental sensors, industrial microphones, and traffic detectors are all vulnerable to hardware wear, environmental contamination (dust, moisture), or calibration loss. Exceptions of this type are managed by cross-sensor consistency checks, self-diagnostic routines, and exclusion of suspect data. This preserves analytic quality across the full use-case spectrum.
-#### 3. Acoustic Ambiguity and Masking Effects
+#### 1.3.3 Acoustic Ambiguity and Masking Effects
 Whether in urban streets, factories, or wildlife habitats, overlapping sound sources often produce ambiguous signals. Common confounders include background noise (wind, rain), transient bursts (construction, fireworks), and acoustic look-alikes (musical sirens, species calls). Exceptions of this type are mitigated via confidence thresholds, persistence rules (N-of-M verification), and secondary classification passes.
-#### 4. Latency Breaches and System Backpressure
+#### 1.3.4 Latency Breaches and System Backpressure
 Since all use cases are real-time in nature, exceeding the end-to-end latency service-level objective (SLO) is a critical exception. Backpressure may arise from bursty workloads (e.g., >10k req/s in U1) or unexpected event surges (e.g., mass siren activations in U2). Exception handling relies on dynamic autoscaling policies, workload shedding of non-critical tasks, and graceful degradation (e.g., widening aggregation windows).
-#### 5. Model Drift and Misclassification
+#### 1.3.5 Model Drift and Misclassification
 All use cases depend on machine learning classifiers. Over time, acoustic distributions shift due to seasonal patterns, machinery wear, or evolving urban soundscapes. Drift manifests as increased false positives or false negatives. Exceptions are managed through continuous monitoring of classification confidence, scheduled retraining, and human-in-the-loop validation for borderline cases.
-#### 6. Connectivity Loss and Sparse Coverage
+#### 1.3.6 Connectivity Loss and Sparse Coverage
 Field-deployed IoT sensors frequently operate under constrained connectivity. Exceptions occur when network outages delay or prevent data arrival. To mitigate this, the system incorporates tolerance for late-arriving data, interpolates across neighboring sensors, and generates sensor health alerts when coverage gaps persist.
-#### 7. Governance, Safety, and Compliance Exceptions
+#### 1.3.7 Governance, Safety, and Compliance Exceptions
 Some exceptions are regulatory or safety-related, rather than purely technical. For example, triggering a false road-closure alert (U2) or a premature industrial shutdown (U4) carries socio-economic risks. To prevent cascading errors, these exceptions are addressed with dual-verification protocols, escalation to human operators, and comprehensive audit logging.
 
 
-## Functional Requerements 
+# CHAPTER 2 NON-FUNCTIONAL REQUIREMENTS AND ARCHITECTURAL DESIGN
+
+## 2.1 General architecture overview
+
+
+
+## 2.2 Architecture definition
+### 2.2.1 Component View diagram
+Here to provide the diagram with its description for 12-15 sentences
+
+### 2.2.2 UML Class diagram
+Here to provide the diagram with its description for 12-15 sentences
+
+### 2.2.3 UML Sequence diagram
+Here to provide the diagram with its description for 12-15 sentences. 
+!!! provide brief explanation of how different solution components are integrated, what is the communication flow across them
+
+### 2.2.4 Architecture Diagram
+Here to provide the diagram with its description for 15-20 sentences. 
+!!! this diagram is the generalization for the solution architecture
+
+
+
+
+
+## 2.3 Functional Requerements 
 ### FR-01: Device Onboarding
 Description: System shall provision and register IoT devices (drones/sensors) securely using a unified API.
 Rationale: Enables automated enrollment to scale deployments without manual intervention, addressing vendor lock-in via cross-platform compatibility.
@@ -271,9 +310,7 @@ Inputs/Outputs: Input: Failed event; Output: Retry or alert.
 Acceptance Criteria: 99% recovery rate; no data loss.
 
 
-## Flowcharts
- TBD
-## Non-Functional Requerements 
+## 2.4 NFRs specification
 
 ### NFR-01: Performance
 Target/Metric: p95 end-to-end ingest latency ≤ 100ms at 100 events/sec.
@@ -334,6 +371,11 @@ Priority: Must; Risk: High (mitigation: unified API).
 Target/Metric: >98% accuracy in validation; handle noisy audio.
 Verification: Sample audits.
 Priority: Should; Risk: Med (mitigation: ML preprocessing).
+
+## 2.5 Data flow
+
+
+
 
 ## Components of architecture
 
