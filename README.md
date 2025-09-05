@@ -113,6 +113,17 @@ The fourth group, data scientists and AI researchers, depends on reproducible da
 Finally, industrial operators and environmental agencies constitute an extended but equally important user group. Industrial operators require predictive maintenance and anomaly detection in acoustic signatures of machinery, while environmental agencies depend on sound-based monitoring for regulatory compliance and ecological conservation. For both categories, the system provides advanced tools for anomaly detection, synthetic workload replay, and high-frequency metrics collection. These capabilities allow stakeholders to anticipate equipment failures, reduce downtime, and monitor biodiversity in non-intrusive ways.
 Taken together, the table illustrates the multi-stakeholder relevance of the proposed solution. It demonstrates that real-time sound analytics, when implemented via a serverless multi-cloud architecture, serves not only operational efficiency but also regulatory, scientific, and environmental objectives. By addressing the specific needs of diverse user groups, the architecture maximizes societal, economic, and scientific impact, positioning itself as a versatile and sustainable technological innovation.
 
+## Use Journey definition
+ 
+Basic Uses Cases for the developed solution 
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Detailed%20Serverless%20Components%20Architecture.png)
+
+
+### Use Case 1: Real-Time Traffic Monitoring
+### Use Case 2: Public-Safety Siren Detection
+### Use Case 3: Urban Noise Mapping
+### Use Case 4: Industrial Acoustic Monitoring
+### Use Case 5: Environmental and Wildlife Monitoring
 
 ## Functional Requerements 
 ### FR-01: Device Onboarding
@@ -175,24 +186,9 @@ Rationale: Maintains reliability in distributed IoT environments.
 Inputs/Outputs: Input: Failed event; Output: Retry or alert.
 Acceptance Criteria: 99% recovery rate; no data loss.
 
-## Use cases
-
-### General system work
-![General system work](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Cloud%20IoT%20System%20%E2%80%93%20Use%20Case.png)
-### Device Lifecycle
-![Device Lifecycle](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Device%20Lifecycle%20Use%20Cases.png)
-### Drone Detection and Alerting
-![Drone Detection and Alerting](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Use%20Case%20Diagram%20for%20Drone%20Detection%20and%20Alerting.png)
 
 ## Flowcharts
-
-### Device registration
-![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/device-registration-Flowchart-initial.svg)
-### Device sends telemetry
-![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Device-sends-telemetry-Flowchart-initial.svg)
-### User queries data
-![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/User-queries-data-Flowchart-initial.svg)
-
+ TBD
 ## Non-Functional Requerements 
 
 ### NFR-01: Performance
