@@ -227,22 +227,79 @@ Some exceptions are regulatory or safety-related, rather than purely technical. 
 
 ## 2.1 General architecture overview
 
+The proposed cloud-native serverless architecture for real-time sound analytics in IoT represents a paradigm shift from traditional monolithic systems to event-driven, microservices-based solutions. The architecture is designed around three fundamental principles: **event-driven processing**, **serverless scalability**, and **multi-cloud portability**. At its core, the system leverages Function-as-a-Service (FaaS) platforms to process acoustic data streams with millisecond-level latency while maintaining cost efficiency through pay-per-use models.
+
+The architecture follows a layered approach consisting of five primary tiers: **Edge/Device Layer**, **Ingestion Layer**, **Processing Layer**, **Storage Layer**, and **Presentation Layer**. The Edge Layer encompasses distributed IoT sensors, microphones, and edge computing devices that capture environmental audio data. These devices communicate through secure MQTT/HTTP protocols to the Ingestion Layer, which handles data validation, schema enforcement, and initial routing through event-driven pipelines.
+
+The Processing Layer represents the heart of the system, implementing serverless functions for real-time audio analysis, feature extraction using librosa, and machine learning inference through pretrained CNN models. This layer employs intelligent pre-warming strategies and deep reinforcement learning (DRL) policies to optimize cold-start delays and resource allocation. The Storage Layer provides both hot and cold data paths, utilizing cloud-native databases and object storage for real-time queries and long-term archival.
+
+The Presentation Layer offers unified APIs and interactive dashboards that enable stakeholders to access insights, configure alerts, and monitor system performance across multiple cloud providers. The entire architecture is designed with Infrastructure-as-Code (IaC) principles, supporting seamless deployment across AWS, Azure, and Google Cloud Platform through Terraform, AWS CDK, and Azure Bicep templates.
+
+Key architectural innovations include **adaptive scaling mechanisms** that respond to bursty workloads of up to 10,000 requests per second, **cross-cloud failover capabilities** ensuring 99.9% availability, and **unified observability** through integrated monitoring, logging, and tracing systems. The architecture also incorporates **data quality assurance** through automated validation pipelines and **privacy compliance** features that anonymize personally identifiable information in audio streams.
+
+The system's design emphasizes **modularity and maintainability**, with each component being independently deployable and scalable. This approach enables rapid iteration, A/B testing of different ML models, and seamless integration of new use cases without disrupting existing functionality. The architecture's **vendor-agnostic design** ensures that organizations can avoid cloud vendor lock-in while maintaining operational consistency across different cloud environments.
 
 
 ## 2.2 Architecture definition
 ### 2.2.1 Component View diagram
-Here to provide the diagram with its description for 12-15 sentences
+
+[![Component View Diagram](Docks/component_view_diagram.md)](Docks/component_view_diagram.md)
+
+The Component View diagram illustrates the modular architecture of the serverless sound analytics system, showcasing the interconnections between core components and their responsibilities. At the **Device Management Layer**, the `DeviceRegistry` component handles IoT device onboarding, authentication, and lifecycle management, while the `SecurityManager` enforces mTLS protocols and manages cryptographic keys for secure communications. The `DeviceGateway` acts as the primary entry point, receiving telemetry data from distributed sensors and microphones through MQTT/HTTP protocols.
+
+The **Data Ingestion Layer** features the `MessageBroker` component, which implements event-driven message queuing with backpressure handling to manage bursty data streams. The `SchemaValidator` performs real-time payload validation against predefined schemas, routing invalid data to dead letter queues (DLQ) while ensuring data quality. The `DataRouter` component intelligently distributes validated audio streams to appropriate processing pipelines based on content type and priority levels.
+
+Within the **Processing Layer**, the `AudioProcessor` component handles real-time audio preprocessing, including noise reduction, normalization, and spectral feature extraction using the librosa library. The `MLInferenceEngine` executes pretrained CNN models for sound classification, implementing intelligent caching and pre-warming strategies to minimize cold-start delays. The `AlertManager` processes classification results, applies business rules, and triggers notifications through multiple channels including SMS, email, and webhooks.
+
+The **Storage Layer** encompasses the `HotStorage` component for real-time data access and the `ColdStorage` component for long-term archival, both implementing data lifecycle management policies. The `MetadataStore` maintains indexes and searchable metadata for efficient querying, while the `ConfigurationManager` handles dynamic configuration updates across all system components.
+
+The **Presentation Layer** includes the `APIGateway` component providing unified RESTful APIs with rate limiting and authentication, and the `DashboardEngine` generating interactive visualizations and real-time monitoring interfaces. The `MonitoringService` aggregates metrics, logs, and traces from all components, enabling comprehensive observability and performance analysis across the entire system architecture.
 
 ### 2.2.2 UML Class diagram
-Here to provide the diagram with its description for 12-15 sentences
+
+[![UML Class Diagram](Docks/class_diagram.md)](Docks/class_diagram.md)
+
+The UML Class diagram defines the object-oriented structure of the serverless sound analytics system, illustrating key classes, their attributes, methods, and relationships. The `Device` abstract class serves as the base for all IoT sensors, containing common attributes such as `deviceId`, `location`, `status`, and `lastSeen`, with methods for `connect()`, `disconnect()`, and `sendTelemetry()`. Concrete implementations include `MicrophoneSensor` for audio capture and `EdgeProcessor` for local preprocessing, each extending the base class with domain-specific functionality.
+
+The `TelemetryData` class encapsulates audio payload information, featuring attributes like `timestamp`, `audioData`, `metadata`, and `qualityScore`, along with validation methods `validateSchema()` and `extractFeatures()`. The `AudioProcessor` class handles real-time audio analysis, containing methods for `normalizeAudio()`, `extractSpectralFeatures()`, and `applyNoiseReduction()`, while maintaining state through attributes such as `processingConfig` and `featureCache`.
+
+The `MLInferenceEngine` class manages machine learning operations, implementing methods like `loadModel()`, `preprocessInput()`, and `classifySound()`, with attributes tracking `modelVersion`, `confidenceThreshold`, and `performanceMetrics`. The `AlertManager` class processes classification results and triggers notifications, containing methods for `evaluateRules()`, `sendNotification()`, and `escalateAlert()`, while maintaining alert history and escalation policies.
+
+The `StorageManager` abstract class defines the interface for data persistence, with concrete implementations `HotStorage` and `ColdStorage` handling different data lifecycle stages. The `APIGateway` class manages external communications, implementing authentication, rate limiting, and request routing through methods like `authenticateRequest()`, `routeRequest()`, and `formatResponse()`. The `ConfigurationManager` class handles dynamic configuration updates across all system components, ensuring consistency and enabling runtime adjustments without service interruption.
 
 ### 2.2.3 UML Sequence diagram
-Here to provide the diagram with its description for 12-15 sentences. 
-!!! provide brief explanation of how different solution components are integrated, what is the communication flow across them
+
+[![UML Sequence Diagram](Docks/sequence_diagram.md)](Docks/sequence_diagram.md)
+
+The UML Sequence diagram illustrates the end-to-end communication flow and component interactions within the serverless sound analytics system, demonstrating how different architectural layers collaborate to process real-time audio data. The sequence begins when a `MicrophoneSensor` captures environmental audio and initiates communication by sending a `connect()` request to the `DeviceGateway`, which authenticates the device through the `SecurityManager` using mTLS protocols and returns a connection token.
+
+Upon successful authentication, the sensor streams `TelemetryData` containing audio payloads to the `DeviceGateway`, which immediately forwards the data to the `MessageBroker` for queuing and backpressure management. The `MessageBroker` routes validated data to the `SchemaValidator`, which performs real-time payload validation against predefined schemas, rejecting invalid data to dead letter queues while forwarding valid audio streams to the `DataRouter`.
+
+The `DataRouter` intelligently distributes audio data to the `AudioProcessor` component, which executes real-time preprocessing including noise reduction, normalization, and spectral feature extraction using the librosa library. The processed audio features are then passed to the `MLInferenceEngine`, which loads the appropriate pretrained CNN model, executes sound classification, and returns confidence scores and classification results.
+
+The `MLInferenceEngine` forwards classification results to the `AlertManager`, which evaluates business rules and confidence thresholds to determine if alerts should be triggered. If alert conditions are met, the `AlertManager` sends notifications through multiple channels (SMS, email, webhooks) while simultaneously storing alert metadata in the `HotStorage` component for real-time access.
+
+Concurrently, the `StorageManager` persists both raw audio data and processed results, implementing data lifecycle policies that route recent data to `HotStorage` for immediate querying and older data to `ColdStorage` for long-term archival. The `APIGateway` provides external access to processed data through RESTful APIs, while the `DashboardEngine` generates real-time visualizations and monitoring interfaces for stakeholders. Throughout this entire flow, the `MonitoringService` aggregates metrics, logs, and traces from all components, enabling comprehensive observability and performance analysis across the distributed serverless architecture.
 
 ### 2.2.4 Architecture Diagram
-Here to provide the diagram with its description for 15-20 sentences. 
-!!! this diagram is the generalization for the solution architecture
+
+[![Architecture Diagram](Docks/architecture_diagram.md)](Docks/architecture_diagram.md)
+
+The Architecture Diagram provides a comprehensive overview of the serverless sound analytics solution, illustrating the complete system topology, data flow patterns, and integration points across multiple cloud providers. The diagram is organized into distinct architectural zones: **Edge Computing Zone**, **Cloud Ingestion Zone**, **Serverless Processing Zone**, **Storage and Analytics Zone**, and **Presentation and Monitoring Zone**, each representing a critical layer of the overall system architecture.
+
+The **Edge Computing Zone** encompasses distributed IoT devices, microphones, and edge processors deployed across urban environments, industrial facilities, and natural habitats. These devices communicate through secure MQTT/HTTP protocols to the **Cloud Ingestion Zone**, which includes IoT Hubs, message brokers, and API gateways that handle device authentication, data validation, and initial routing. The ingestion zone implements event-driven architectures with backpressure handling to manage bursty data streams from thousands of concurrent devices.
+
+The **Serverless Processing Zone** represents the core computational layer, featuring Function-as-a-Service (FaaS) platforms including AWS Lambda, Azure Functions, and Google Cloud Functions. This zone implements microservices for audio preprocessing, machine learning inference, and real-time analytics, with intelligent pre-warming strategies and deep reinforcement learning policies to optimize performance and cost efficiency. The processing zone supports auto-scaling to handle workloads of up to 10,000 requests per second while maintaining millisecond-level latency.
+
+The **Storage and Analytics Zone** provides both hot and cold data storage solutions, utilizing cloud-native databases, object storage, and data lakes for different data lifecycle stages. This zone implements data partitioning strategies, indexing mechanisms, and query optimization techniques to support real-time analytics and long-term trend analysis. The analytics capabilities include time-series analysis, spatial data processing, and machine learning model training and deployment pipelines.
+
+The **Presentation and Monitoring Zone** offers unified APIs, interactive dashboards, and comprehensive observability tools that enable stakeholders to access insights, configure alerts, and monitor system performance. This zone implements cross-cloud monitoring solutions, automated alerting systems, and data visualization tools that provide real-time visibility into system health, performance metrics, and business intelligence.
+
+The architecture diagram also illustrates **cross-cloud connectivity** through virtual private networks, API gateways, and data replication mechanisms that ensure high availability and disaster recovery capabilities. **Security boundaries** are clearly defined with encryption at rest and in transit, identity and access management, and compliance frameworks that meet GDPR and industry standards. The diagram demonstrates **Infrastructure-as-Code** principles through Terraform, AWS CDK, and Azure Bicep templates that enable reproducible deployments across different cloud environments.
+
+**Integration patterns** are highlighted through event-driven messaging, RESTful APIs, and GraphQL interfaces that facilitate seamless communication between components. The architecture supports **multi-tenancy** through namespace isolation, resource quotas, and tenant-specific configurations that enable secure multi-organization deployments. **Observability** is achieved through distributed tracing, centralized logging, and metrics collection that provide comprehensive insights into system behavior and performance characteristics.
+
+The diagram also illustrates **data governance** mechanisms including data lineage tracking, privacy compliance features, and audit logging that ensure regulatory compliance and data quality. **Cost optimization** strategies are represented through auto-scaling policies, resource scheduling, and usage monitoring that maintain cost efficiency while meeting performance requirements. The architecture's **extensibility** is demonstrated through plugin architectures, microservices patterns, and API versioning strategies that enable seamless integration of new features and use cases without disrupting existing functionality.
 
 
 
@@ -373,6 +430,24 @@ Verification: Sample audits.
 Priority: Should; Risk: Med (mitigation: ML preprocessing).
 
 ## 2.5 Data flow
+
+[![Data Flow Diagram](Docks/data_flow_diagram.md)](Docks/data_flow_diagram.md)
+
+The data flow architecture of the serverless sound analytics system follows a sophisticated event-driven pipeline that processes acoustic data from edge devices through multiple transformation stages to deliver real-time insights and analytics. The flow begins at the **Data Source Layer** where distributed IoT sensors, microphones, and edge processors capture environmental audio data at various sampling rates and quality levels, depending on the specific use case requirements and device capabilities.
+
+**Data Ingestion Flow** initiates when audio data is captured by edge devices and transmitted through secure MQTT/HTTP protocols to the cloud-based IoT Hub. The ingestion layer implements intelligent buffering and compression mechanisms to optimize bandwidth utilization while maintaining data quality. Upon arrival, the `MessageBroker` component queues incoming data streams and applies backpressure handling to manage bursty workloads, ensuring system stability during peak traffic periods.
+
+**Data Validation and Routing Flow** processes incoming telemetry through the `SchemaValidator` component, which performs real-time payload validation against predefined JSON schemas, checking for data integrity, completeness, and format compliance. Valid data streams are routed to appropriate processing pipelines based on content type, priority levels, and geographic distribution, while invalid or corrupted data is redirected to dead letter queues for manual inspection and error analysis.
+
+**Audio Processing Flow** transforms raw audio data through the `AudioProcessor` component, which executes real-time preprocessing including noise reduction, normalization, spectral feature extraction using librosa, and audio format standardization. The processed audio features are then passed to the `MLInferenceEngine`, which loads appropriate pretrained CNN models and executes sound classification algorithms, returning confidence scores and classification results for further processing.
+
+**Analytics and Alerting Flow** processes classification results through the `AlertManager` component, which evaluates business rules, confidence thresholds, and escalation policies to determine appropriate actions. When alert conditions are met, the system triggers notifications through multiple channels including SMS, email, webhooks, and dashboard updates, while simultaneously storing alert metadata and processing results in both hot and cold storage systems.
+
+**Storage and Retrieval Flow** implements a sophisticated data lifecycle management strategy, routing recent data to `HotStorage` for immediate querying and real-time analytics, while older data is automatically archived to `ColdStorage` for long-term retention and compliance purposes. The storage layer supports both structured and unstructured data formats, enabling efficient querying through SQL and NoSQL interfaces.
+
+**Presentation and Visualization Flow** provides external access to processed data through the `APIGateway` component, which implements RESTful APIs, GraphQL interfaces, and real-time WebSocket connections for data streaming. The `DashboardEngine` generates interactive visualizations, real-time monitoring interfaces, and business intelligence reports that enable stakeholders to access insights, configure alerts, and monitor system performance across multiple cloud providers.
+
+**Monitoring and Observability Flow** aggregates metrics, logs, and traces from all system components through the `MonitoringService`, which provides comprehensive observability into system behavior, performance characteristics, and operational health. This flow enables proactive monitoring, automated alerting, and performance optimization through continuous analysis of system metrics and user behavior patterns.
 
 
 
