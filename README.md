@@ -583,68 +583,354 @@ Rationale: Maintains reliability in distributed IoT environments.
 Inputs/Outputs: Input: Failed event; Output: Retry or alert.
 Acceptance Criteria: 99% recovery rate; no data loss.
 
+### 2.3.1 Requirement Traceability Matrix
+
+| Requirement ID | Business Objective | Stakeholder | Priority | Dependencies | NFRs | Test Cases |
+|----------------|-------------------|-------------|----------|--------------|------|------------|
+| **FR-01** | Enable rapid device deployment | Operations, Security | Must | FR-02 | NFR-05, NFR-11 | TC-001, TC-002 |
+| **FR-02** | Ensure secure communications | Security, Compliance | Must | - | NFR-05, NFR-18 | TC-003, TC-004 |
+| **FR-03** | Handle bursty data streams | Operations, Data Science | Must | FR-04 | NFR-01, NFR-02 | TC-005, TC-006 |
+| **FR-04** | Maintain data quality | Data Science, Operations | Must | FR-03 | NFR-12, NFR-18 | TC-007, TC-008 |
+| **FR-05** | Support real-time and archival access | Operations, Research | Must | FR-04 | NFR-01, NFR-09 | TC-009, TC-010 |
+| **FR-06** | Enable real-time analytics | Operations, Research | Must | FR-05 | NFR-01, NFR-12 | TC-011, TC-012 |
+| **FR-07** | Provide unified access interface | All Stakeholders | Must | FR-05, FR-06 | NFR-01, NFR-14 | TC-013, TC-014 |
+| **FR-08** | Comply with data regulations | Compliance, Legal | Must | FR-05 | NFR-06, NFR-18 | TC-015, TC-016 |
+| **FR-09** | Control system access | Security, Operations | Must | FR-02 | NFR-05, NFR-18 | TC-017, TC-018 |
+| **FR-10** | Maintain system reliability | Operations, Security | Must | FR-03, FR-04 | NFR-04, NFR-03 | TC-019, TC-020 |
+
+#### Traceability Legend
+- **Business Objective**: Links to high-level business goals
+- **Stakeholder**: Primary stakeholder responsible for requirement
+- **Priority**: Must/Should/Could classification
+- **Dependencies**: Other requirements that must be satisfied first
+- **NFRs**: Related non-functional requirements
+- **Test Cases**: Specific test cases for validation
+
+### 2.3.2 Requirement Validation Methods
+
+| Requirement ID | Validation Method | Test Type | Success Criteria | Tools/Techniques |
+|----------------|------------------|-----------|------------------|------------------|
+| **FR-01** | Device registration simulation | Integration | 30s connection time | Load testing, API testing |
+| **FR-02** | Security penetration testing | Security | TLS 1.3+ enforcement | OWASP ZAP, Burp Suite |
+| **FR-03** | Load testing with bursty data | Performance | 100 events/sec processing | JMeter, K6 |
+| **FR-04** | Data quality validation testing | Functional | 99% valid data pass rate | Schema validation, data profiling |
+| **FR-05** | Storage performance testing | Performance | 1s hot, 10s cold retrieval | Database benchmarking |
+| **FR-06** | ML model accuracy testing | Functional | >95% detection accuracy | Model validation, A/B testing |
+| **FR-07** | API performance testing | Performance | <200ms response time | Load testing, monitoring |
+| **FR-08** | Compliance audit | Compliance | GDPR compliance verified | Third-party audit |
+| **FR-09** | Access control testing | Security | Unauthorized access denied | Security testing, RBAC validation |
+| **FR-10** | Fault injection testing | Reliability | 99% recovery rate | Chaos engineering, fault injection |
+
+### 2.3.3 Requirement Dependencies
+
+```mermaid
+graph TD
+    FR02[FR-02: Secure Communications] --> FR01[FR-01: Device Onboarding]
+    FR03[FR-03: Data Ingestion] --> FR04[FR-04: Data Validation]
+    FR04 --> FR05[FR-05: Data Storage]
+    FR05 --> FR06[FR-06: Analytics and Alerts]
+    FR05 --> FR07[FR-07: Dashboards and APIs]
+    FR06 --> FR07
+    FR05 --> FR08[FR-08: Data Lifecycle Management]
+    FR02 --> FR09[FR-09: Admin and RBAC]
+    FR03 --> FR10[FR-10: Failure Handling]
+    FR04 --> FR10
+```
 
 ## 2.4 NFRs specification
 
 ### NFR-01: Performance
-Target/Metric: p95 end-to-end ingest latency ≤ 100ms at 100 events/sec.
-Verification: Benchmark tests with simulated loads.
-Priority: Must; Risk: High (mitigation: optimize serverless cold starts).
+**Target/Metric:** p95 end-to-end ingest latency ≤ 100ms at 100 events/sec
+**Measurement Method:** Load testing with JMeter, monitoring with Prometheus
+**Acceptance Criteria:** 
+- 95% of requests complete within 100ms
+- System maintains performance under 2x normal load
+- Cold start latency ≤ 200ms for serverless functions
+**Verification:** Automated performance tests in CI/CD pipeline
+**Risk Mitigation:** Function warming, connection pooling, caching
+**Priority:** Must; Risk: High
+**Stakeholder:** Operations, Data Science
 
 ### NFR-02: Scalability
-Target/Metric: Auto-scale to 10,000 devices without degradation (>99% throughput).
-Verification: Load testing in hybrid cloud.
-Priority: Must; Risk: Med (mitigation: use container orchestration).
+**Target/Metric:** Auto-scale to 10,000 devices without degradation (>99% throughput)
+**Measurement Method:** Load testing with K6, monitoring with Grafana
+**Acceptance Criteria:**
+- System handles 10,000 concurrent devices
+- Throughput remains >99% under peak load
+- Auto-scaling responds within 30 seconds
+- Resource utilization <80% under normal load
+**Verification:** Automated load testing in staging environment
+**Risk Mitigation:** Container orchestration, horizontal pod autoscaling
+**Priority:** Must; Risk: Medium
+**Stakeholder:** Operations, Platform Engineering
 
 ### NFR-03: Availability
-Target/Metric: 99.9% uptime, multi-region failover <1min.
-Verification: Chaos engineering tests.
-Priority: Must; Risk: High (mitigation: redundant deployments).
+**Target/Metric:** 99.9% uptime, multi-region failover <1min
+**Measurement Method:** Uptime monitoring with Pingdom, chaos engineering with Chaos Monkey
+**Acceptance Criteria:**
+- 99.9% uptime (8.76 hours downtime/year)
+- Multi-region failover <60 seconds
+- Health check response time <5 seconds
+- Recovery time objective (RTO) <15 minutes
+**Verification:** Continuous monitoring, quarterly chaos engineering tests
+**Risk Mitigation:** Multi-region deployment, redundant systems, automated failover
+**Priority:** Must; Risk: High
+**Stakeholder:** Operations, Business
 
 ### NFR-04: Reliability
-Target/Metric: <0.1% data loss, with idempotency and retries.
-Verification: Fault injection simulations.
-Priority: Must; Risk: Med (mitigation: DLQs).
+**Target/Metric:** <0.1% data loss, with idempotency and retries
+**Measurement Method:** Fault injection testing, data integrity monitoring
+**Acceptance Criteria:**
+- Data loss rate <0.1% under normal conditions
+- 99% message delivery guarantee with retries
+- Idempotent operations prevent duplicate processing
+- Dead letter queue handles failed messages
+**Verification:** Automated fault injection, data consistency checks
+**Risk Mitigation:** Dead letter queues, retry mechanisms, data replication
+**Priority:** Must; Risk: Medium
+**Stakeholder:** Operations, Data Science
 
 ### NFR-05: Security
-Target/Metric: mTLS enforcement, zero trust; no vulnerabilities in OWASP top 10.
-Verification: Pen-tests and audits.
-Priority: Must; Risk: High (mitigation: regular scans).
+**Target/Metric:** mTLS enforcement, zero trust; no vulnerabilities in OWASP top 10
+**Measurement Method:** Security scanning with OWASP ZAP, penetration testing
+**Acceptance Criteria:**
+- All communications use mTLS (TLS 1.3+)
+- Zero vulnerabilities in OWASP Top 10
+- Multi-factor authentication for admin access
+- Encryption at rest (AES-256) and in transit
+- Regular security audits and compliance checks
+**Verification:** Quarterly penetration testing, continuous security scanning
+**Risk Mitigation:** Regular security updates, vulnerability scanning, access controls
+**Priority:** Must; Risk: High
+**Stakeholder:** Security, Compliance
 
 ### NFR-06: Privacy/Compliance
-Target/Metric: GDPR compliant; anonymize PII in audio data.
-Verification: Conformance audits.
-Priority: Must; Risk: High (mitigation: data masking tools).
+**Target/Metric:** GDPR compliant; anonymize PII in audio data
+**Measurement Method:** Compliance audits, data privacy impact assessments
+**Acceptance Criteria:**
+- Full GDPR compliance (right to be forgotten, data portability)
+- PII anonymization in all audio data
+- Data retention policies enforced (30 days max)
+- Privacy by design principles implemented
+- Regular compliance audits and certifications
+**Verification:** Annual third-party compliance audits, privacy impact assessments
+**Risk Mitigation:** Data masking tools, privacy-preserving ML techniques
+**Priority:** Must; Risk: High
+**Stakeholder:** Compliance, Legal
 
 ### NFR-07: Interoperability
-Target/Metric: Support MQTT/HTTP/AMQP; unified API for cross-cloud.
-Verification: Integration tests across AWS/Azure/GCP.
-Priority: Should; Risk: Med (mitigation: abstraction layers).
+**Target/Metric:** Support MQTT/HTTP/AMQP; unified API for cross-cloud
+**Measurement Method:** Integration testing across cloud providers
+**Acceptance Criteria:**
+- Support for MQTT, HTTP, and AMQP protocols
+- Unified API works across AWS, Azure, and GCP
+- Data format compatibility across platforms
+- Seamless migration between cloud providers
+- Standardized API responses and error handling
+**Verification:** Cross-cloud integration tests, protocol compatibility testing
+**Risk Mitigation:** Abstraction layers, standardized interfaces
+**Priority:** Should; Risk: Medium
+**Stakeholder:** Platform Engineering, Operations
 
 ### NFR-08: Observability
-Target/Metric: Full metrics/logs/traces; queryable in <5s.
-Verification: Monitoring dashboard validation.
-Priority: Should; Risk: Low (mitigation: open-source tools).
+**Target/Metric:** Full metrics/logs/traces; queryable in <5s
+**Measurement Method:** Monitoring dashboard validation, query performance testing
+**Acceptance Criteria:**
+- Complete metrics, logs, and distributed traces
+- Query response time <5 seconds for 95% of queries
+- Real-time alerting for critical issues
+- Historical data retention for 1 year
+- Unified monitoring across all cloud providers
+**Verification:** Dashboard performance testing, monitoring coverage analysis
+**Risk Mitigation:** Open-source monitoring tools, centralized logging
+**Priority:** Should; Risk: Low
+**Stakeholder:** Operations, Platform Engineering
 
 ### NFR-09: Cost
-Target/Metric: ≤ $0.01 per event processed.
-Verification: Monthly cost reports.
-Priority: Could; Risk: Low (mitigation: auto-scaling).
+**Target/Metric:** ≤ $0.01 per event processed
+**Measurement Method:** Monthly cost analysis, usage monitoring
+**Acceptance Criteria:**
+- Cost per event ≤ $0.01 under normal load
+- Monthly cost variance <10% from budget
+- Cost optimization through auto-scaling
+- Transparent cost breakdown by component
+- ROI positive within 6 months
+**Verification:** Monthly cost reports, usage analytics
+**Risk Mitigation:** Auto-scaling, resource optimization, cost monitoring
+**Priority:** Could; Risk: Low
+**Stakeholder:** Finance, Operations
 
 ### NFR-10: Maintainability
-Target/Metric: Code modularity; deploy updates <5min downtime.
-Verification: CI/CD pipeline tests.
-Priority: Should; Risk: Low (mitigation: microservices).
+**Target/Metric:** Code modularity; deploy updates <5min downtime
+**Measurement Method:** Code quality metrics, deployment time monitoring
+**Acceptance Criteria:**
+- Code coverage >90% for critical components
+- Cyclomatic complexity <10 per function
+- Deployment time <5 minutes with zero downtime
+- Modular architecture with clear separation of concerns
+- Automated testing and deployment pipelines
+**Verification:** Code quality analysis, deployment time tracking
+**Risk Mitigation:** Microservices architecture, automated testing
+**Priority:** Should; Risk: Low
+**Stakeholder:** Development, Operations
 
 ### NFR-11: Portability
-Target/Metric: Migrate between clouds <1hr; no vendor-specific code.
-Verification: Cross-platform deployment tests.
-Priority: Must; Risk: High (mitigation: unified API).
+**Target/Metric:** Migrate between clouds <1hr; no vendor-specific code
+**Measurement Method:** Cross-platform deployment testing, migration simulation
+**Acceptance Criteria:**
+- Migration time <1 hour between cloud providers
+- No vendor-specific code in application layer
+- Infrastructure as Code for all components
+- Consistent behavior across all cloud platforms
+- Automated deployment across multiple clouds
+**Verification:** Cross-cloud deployment tests, migration drills
+**Risk Mitigation:** Unified API, abstraction layers, IaC
+**Priority:** Must; Risk: High
+**Stakeholder:** Platform Engineering, Operations
 
 ### NFR-12: Data Quality
-Target/Metric: >98% accuracy in validation; handle noisy audio.
-Verification: Sample audits.
-Priority: Should; Risk: Med (mitigation: ML preprocessing).
+**Target/Metric:** >98% accuracy in validation; handle noisy audio
+**Measurement Method:** Data quality monitoring, ML model validation
+**Acceptance Criteria:**
+- Data validation accuracy >98%
+- Handle audio with SNR >20dB
+- Automated data quality checks
+- Outlier detection and handling
+- Data lineage tracking for quality assurance
+**Verification:** Automated data quality testing, sample audits
+**Risk Mitigation:** ML preprocessing, noise reduction algorithms
+**Priority:** Should; Risk: Medium
+**Stakeholder:** Data Science, Operations
+
+### NFR-13: Testability
+**Target/Metric:** 90% code coverage, automated test execution <10min
+**Measurement Method:** Code coverage analysis, test execution time monitoring
+**Acceptance Criteria:**
+- Code coverage >90% for all components
+- Test execution time <10 minutes
+- Automated test suite for all environments
+- Test data management and isolation
+- Performance testing integrated in CI/CD
+**Verification:** Automated coverage reports, test execution monitoring
+**Risk Mitigation:** Test-driven development, automated testing frameworks
+**Priority:** Should; Risk: Low
+**Stakeholder:** Development, QA
+
+### NFR-14: Usability
+**Target/Metric:** Dashboard load time <3s, intuitive navigation
+**Measurement Method:** User acceptance testing, usability studies
+**Acceptance Criteria:**
+- Dashboard load time <3 seconds
+- User task completion rate >95%
+- Intuitive navigation with <3 clicks to key functions
+- Mobile-responsive design
+- Accessibility compliance (WCAG 2.1 AA)
+**Verification:** User testing, usability studies, performance monitoring
+**Risk Mitigation:** UX design reviews, user feedback integration
+**Priority:** Should; Risk: Low
+**Stakeholder:** End Users, UX Design
+
+### NFR-15: Configurability
+**Target/Metric:** Runtime configuration changes without restart
+**Measurement Method:** Configuration management testing
+**Acceptance Criteria:**
+- Runtime configuration updates without service restart
+- Feature flags for gradual rollouts
+- Environment-specific configurations
+- Configuration validation and rollback
+- Centralized configuration management
+**Verification:** Configuration testing, feature flag validation
+**Risk Mitigation:** Configuration management tools, validation frameworks
+**Priority:** Could; Risk: Low
+**Stakeholder:** Operations, Development
+
+### NFR-16: Recoverability
+**Target/Metric:** RTO <15min, RPO <5min for critical functions
+**Measurement Method:** Disaster recovery testing, backup validation
+**Acceptance Criteria:**
+- Recovery Time Objective (RTO) <15 minutes
+- Recovery Point Objective (RPO) <5 minutes
+- Automated backup and restore procedures
+- Cross-region data replication
+- Regular disaster recovery drills
+**Verification:** Disaster recovery testing, backup validation
+**Risk Mitigation:** Automated failover, data replication, backup strategies
+**Priority:** Must; Risk: High
+**Stakeholder:** Operations, Business
+
+### NFR-17: Interoperability
+**Target/Metric:** Support for 3+ cloud providers, unified API
+**Measurement Method:** Cross-platform integration tests
+**Acceptance Criteria:**
+- Support for AWS, Azure, and Google Cloud
+- Unified API across all platforms
+- Data format compatibility
+- Seamless migration between providers
+- Standardized error handling and responses
+**Verification:** Cross-cloud integration tests, migration testing
+**Risk Mitigation:** Abstraction layers, standardized interfaces
+**Priority:** Must; Risk: Medium
+**Stakeholder:** Platform Engineering, Operations
+
+### NFR-18: Compliance
+**Target/Metric:** GDPR, SOC 2, ISO 27001 compliance
+**Measurement Method:** Third-party audits and assessments
+**Acceptance Criteria:**
+- Full GDPR compliance (data protection, privacy rights)
+- SOC 2 Type II certification
+- ISO 27001 security management
+- Regular compliance audits
+- Audit trail and documentation
+**Verification:** Third-party audits, compliance assessments
+**Risk Mitigation:** Compliance framework, regular audits
+**Priority:** Must; Risk: High
+**Stakeholder:** Compliance, Legal
+
+### 2.4.1 NFR Summary Dashboard
+
+| NFR ID | Category | Priority | Risk Level | Status | Owner |
+|--------|----------|----------|------------|--------|-------|
+| NFR-01 | Performance | Must | High | In Progress | Operations |
+| NFR-02 | Scalability | Must | Medium | In Progress | Platform Engineering |
+| NFR-03 | Availability | Must | High | In Progress | Operations |
+| NFR-04 | Reliability | Must | Medium | In Progress | Operations |
+| NFR-05 | Security | Must | High | In Progress | Security |
+| NFR-06 | Privacy/Compliance | Must | High | In Progress | Compliance |
+| NFR-07 | Interoperability | Should | Medium | In Progress | Platform Engineering |
+| NFR-08 | Observability | Should | Low | In Progress | Operations |
+| NFR-09 | Cost | Could | Low | In Progress | Finance |
+| NFR-10 | Maintainability | Should | Low | In Progress | Development |
+| NFR-11 | Portability | Must | High | In Progress | Platform Engineering |
+| NFR-12 | Data Quality | Should | Medium | In Progress | Data Science |
+| NFR-13 | Testability | Should | Low | In Progress | Development |
+| NFR-14 | Usability | Should | Low | In Progress | UX Design |
+| NFR-15 | Configurability | Could | Low | In Progress | Operations |
+| NFR-16 | Recoverability | Must | High | In Progress | Operations |
+| NFR-17 | Interoperability | Must | Medium | In Progress | Platform Engineering |
+| NFR-18 | Compliance | Must | High | In Progress | Compliance |
+
+### 2.4.2 NFR Validation Strategy
+
+#### Testing Approach
+- **Unit Testing**: Individual component validation
+- **Integration Testing**: Cross-component interaction validation
+- **Performance Testing**: Load, stress, and endurance testing
+- **Security Testing**: Penetration testing and vulnerability assessment
+- **Compliance Testing**: Regulatory and standards compliance validation
+- **User Acceptance Testing**: End-user functionality validation
+
+#### Measurement Tools
+- **Performance**: JMeter, K6, Prometheus, Grafana
+- **Security**: OWASP ZAP, Burp Suite, Nessus
+- **Quality**: SonarQube, CodeClimate, ESLint
+- **Monitoring**: Prometheus, Grafana, ELK Stack
+- **Testing**: Jest, Pytest, Selenium, Cypress
+
+#### Success Criteria
+- All Must-have NFRs meet 100% of acceptance criteria
+- All Should-have NFRs meet 90% of acceptance criteria
+- All Could-have NFRs meet 80% of acceptance criteria
+- Continuous monitoring and validation in production
 
 ## 2.5 Data flow
 
