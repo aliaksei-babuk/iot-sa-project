@@ -116,14 +116,57 @@ Taken together, the table illustrates the multi-stakeholder relevance of the pro
 ## Use Journey definition
  
 Basic Uses Cases for the developed solution 
-![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Detailed%20Serverless%20Components%20Architecture.png)
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Use_case_specification.png)
 
 
 ### Use Case 1: Real-Time Traffic Monitoring
+| Field |	Description |
+|------|------------------|
+|Actors|City operators, traffic management systems|
+|Preconditions|Microphones deployed at intersections and road segments stream audio to the IoT Hub.|
+|Basic Flow|The serverless pipeline ingests audio, extracts spectral features using librosa, and classifies events such as honking or congestion indicators via pretrained CNN models. Metrics are aggregated into dashboards that provide near real-time situational awareness.|
+|Postconditions|Operators receive alerts and visualizations that support immediate traffic control actions, such as rerouting or adjusting signal timing.|
+|Primary Benefit|Reduced congestion and enhanced planning through evidence-based traffic management.|
+
+![image](https://github.com/aliaksei-babuk/iot-sa-project/blob/main/Docks/Flow%20Chart%20for%20the%20UC-1.png)
+
+The real-time traffic monitoring use case (UC-1) is designed to support urban mobility management by leveraging continuous acoustic data streams from distributed road-side microphones. The main flow involves the ingestion of audio via the IoT Hub, feature extraction through librosa, and subsequent classification of traffic-related acoustic events (e.g., honking, congestion signatures) using pretrained CNN models. Results are aggregated into dashboards that allow city operators to make evidence-based interventions. Potential exceptions include network disruptions that may cause partial data loss, misclassification due to overlapping sound events, or cloud function cold-start delays that temporarily degrade responsiveness. Nevertheless, the benefits are significant: traffic management authorities gain timely indicators for congestion mitigation, law enforcement agencies can respond more effectively to incidents, and urban planners obtain longitudinal datasets that inform infrastructure design 
+
 ### Use Case 2: Public-Safety Siren Detection
+| Field |	Description |
+|------|------------------|
+|Actors|City operators, traffic management systems|
+|Preconditions||
+|Basic Flow||
+|Postconditions||
+|Primary Benefit||
+
 ### Use Case 3: Urban Noise Mapping
+| Field |	Description |
+|------|------------------|
+|Actors|City operators, traffic management systems|
+|Preconditions||
+|Basic Flow||
+|Postconditions||
+|Primary Benefit||
+
 ### Use Case 4: Industrial Acoustic Monitoring
+| Field |	Description |
+|------|------------------|
+|Actors|City operators, traffic management systems|
+|Preconditions||
+|Basic Flow||
+|Postconditions||
+|Primary Benefit||
+
 ### Use Case 5: Environmental and Wildlife Monitoring
+| Field |	Description |
+|------|------------------|
+|Actors|City operators, traffic management systems|
+|Preconditions||
+|Basic Flow||
+|Postconditions||
+|Primary Benefit||
 
 ## Functional Requerements 
 ### FR-01: Device Onboarding
