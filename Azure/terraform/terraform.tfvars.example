@@ -1,0 +1,130 @@
+# Azure IoT Sound Analytics - Terraform Variables Example
+# Copy this file to terraform.tfvars and customize the values
+
+# Environment Configuration
+environment = "dev"
+location    = "East US"
+
+# Networking Configuration
+vnet_address_space = ["10.0.0.0/16"]
+
+subnet_configs = {
+  "public" = {
+    address_prefixes  = ["10.0.1.0/24"]
+    service_endpoints = ["Microsoft.Storage", "Microsoft.KeyVault"]
+  }
+  "private-compute" = {
+    address_prefixes  = ["10.0.2.0/24"]
+    service_endpoints = ["Microsoft.Storage", "Microsoft.KeyVault", "Microsoft.ServiceBus"]
+  }
+  "private-data" = {
+    address_prefixes  = ["10.0.3.0/24"]
+    service_endpoints = ["Microsoft.Storage", "Microsoft.KeyVault", "Microsoft.Sql"]
+  }
+  "private-integration" = {
+    address_prefixes  = ["10.0.4.0/24"]
+    service_endpoints = ["Microsoft.Storage", "Microsoft.KeyVault", "Microsoft.ServiceBus"]
+  }
+}
+
+# IoT Services Configuration
+iot_hub_sku      = "S1"
+iot_hub_capacity = 1
+
+# Storage Configuration
+cosmos_db_throughput = 400
+sql_database_sku     = "S0"
+
+# Compute Configuration
+function_app_plan_sku           = "Y1"
+container_app_environment_sku   = "Consumption"
+
+# Security Configuration
+enable_security_center = true
+enable_ddos_protection = false
+
+# Monitoring Configuration
+enable_monitoring = true
+retention_days    = 30
+backup_retention_days = 7
+
+# Notification Configuration
+admin_email = "admin@yourcompany.com"
+notification_phone = "+1234567890"
+
+# Network Security
+allowed_ip_addresses = [
+  "203.0.113.0/24",
+  "198.51.100.0/24"
+]
+
+# Private Endpoints
+enable_private_endpoints = true
+
+# Encryption
+enable_encryption_at_rest  = true
+enable_encryption_in_transit = true
+enable_audit_logging = true
+
+# Compliance Standards
+compliance_standards = ["GDPR", "SOC2", "ISO27001"]
+
+# API Management Configuration
+api_management_sku = "Developer_1"
+publisher_name     = "Your Company"
+publisher_email    = "admin@yourcompany.com"
+
+# Analytics Configuration
+enable_power_bi = false
+enable_synapse  = false
+
+# Additional Email Receivers for Alerts
+additional_email_receivers = [
+  {
+    name  = "ops-team"
+    email = "ops@yourcompany.com"
+  },
+  {
+    name  = "security-team"
+    email = "security@yourcompany.com"
+  }
+]
+
+# SMS Receivers for Alerts
+sms_receivers = [
+  {
+    name         = "on-call-engineer"
+    country_code = "1"
+    phone_number = "1234567890"
+  }
+]
+
+# Webhook Receivers for Alerts
+webhook_receivers = [
+  {
+    name = "slack-webhook"
+    uri  = "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+  }
+]
+
+# Power BI Administrators (if enabled)
+power_bi_administrators = [
+  "admin@yourcompany.com",
+  "analyst@yourcompany.com"
+]
+
+# Synapse Configuration (if enabled)
+synapse_sql_admin_login    = "sqladmin"
+synapse_sql_admin_password = "YourSecurePassword123!"
+
+# SQL Server Configuration
+sql_admin_username = "sqladmin"
+sql_admin_password = "YourSecurePassword123!"
+
+# Azure AD Configuration
+azure_ad_admin_login      = "admin@yourcompany.com"
+azure_ad_admin_object_id  = "00000000-0000-0000-0000-000000000000"
+
+# Security Contact Information
+security_contact_email = "security@yourcompany.com"
+security_contact_phone = "+1234567890"
