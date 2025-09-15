@@ -10,10 +10,16 @@ variable "environment" {
   }
 }
 
+variable "resource_group_name" {
+  description = "Name of the Azure resource group"
+  type        = string
+  default     = "Group1"
+}
+
 variable "location" {
   description = "Azure region for resources"
   type        = string
-  default     = "East US"
+  default     = "West Europe"
 }
 
 variable "vnet_address_space" {

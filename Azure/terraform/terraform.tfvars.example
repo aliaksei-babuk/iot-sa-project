@@ -4,6 +4,7 @@
 # Environment Configuration
 environment = "dev"
 location    = "East US"
+resource_group_name = "Group1"
 
 # Networking Configuration
 vnet_address_space = ["10.0.0.0/16"]

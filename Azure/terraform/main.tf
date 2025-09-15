@@ -44,7 +44,7 @@ locals {
 
 # Resource Group
 resource "azurerm_resource_group" "main" {
-  name     = "${local.project_name}-${local.environment}-rg"
+  name     = var.resource_group_name
   location = local.location
   tags     = local.common_tags
 }
@@ -129,9 +129,15 @@ module "analytics" {
   resource_group_name = azurerm_resource_group.main.name
   event_hub_namespace = module.iot_services.event_hub_namespace
   event_hub_name      = module.iot_services.event_hub_name
+  event_hub_namespace_id = module.iot_services.event_hub_namespace_id
+  event_hub_shared_access_key = module.iot_services.event_hub_primary_key
   storage_account_id  = module.storage.storage_account_id
+  storage_account_name = module.storage.storage_account_name
+  storage_account_key = module.storage.storage_account_key
+  storage_account_connection_string = module.storage.storage_account_connection_string
   cosmos_db_endpoint  = module.storage.cosmos_db_endpoint
   cosmos_db_key       = module.storage.cosmos_db_key
+  cosmos_db_database_id = module.storage.cosmos_db_database_id
 }
 
 # Call security module
