@@ -152,7 +152,7 @@ resource "azurerm_cdn_frontdoor_origin" "api_management" {
 
 # Front Door Endpoint
 resource "azurerm_cdn_frontdoor_endpoint" "main" {
-  name                     = "${var.project_name}-${var.environment}-fd-endpoint-${var.suffix}"
+  name                     = "${substr(var.project_name, 0, 6)}${var.environment}fd${substr(var.suffix, 0, 6)}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.main.id
 }
 
@@ -197,7 +197,7 @@ resource "azurerm_cdn_frontdoor_security_policy" "main" {
 
 # Front Door Firewall Policy
 resource "azurerm_cdn_frontdoor_firewall_policy" "main" {
-  name                              = "${var.project_name}-${var.environment}-fd-waf-${var.suffix}"
+  name                              = "iot${var.environment}fdwaf${substr(replace(var.suffix, "-", ""), 0, 6)}"
   resource_group_name               = var.resource_group_name
   sku_name                          = azurerm_cdn_frontdoor_profile.main.sku_name
   enabled                           = true
@@ -357,9 +357,9 @@ resource "azurerm_private_endpoint" "api_management" {
 
 # Private DNS Record for API Management (if private endpoints enabled)
 resource "azurerm_private_dns_a_record" "api_management" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "apimanagement") ? 1 : 0
   name                = azurerm_api_management.main.name
-  zone_name           = var.private_dns_zone_names["servicebus"]
+  zone_name           = var.private_dns_zone_names["apimanagement"]
   resource_group_name = var.resource_group_name
   ttl                 = 300
   records             = [azurerm_private_endpoint.api_management[0].private_service_connection[0].private_ip_address]

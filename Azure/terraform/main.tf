@@ -89,6 +89,9 @@ module "compute" {
   iot_hub_connection_string = module.iot_services.iot_hub_connection_string
   event_hub_connection_string = module.iot_services.event_hub_connection_string
   service_bus_connection_string = module.iot_services.service_bus_connection_string
+  log_analytics_workspace_id = module.monitoring.log_analytics_workspace_id
+  application_insights_id = module.monitoring.application_insights_id
+  application_insights_instrumentation_key = module.monitoring.application_insights_instrumentation_key
 }
 
 # Call storage module
@@ -130,6 +133,8 @@ module "analytics" {
   cosmos_db_endpoint  = module.storage.cosmos_db_endpoint
   cosmos_db_key       = module.storage.cosmos_db_key
   cosmos_db_database_id = module.storage.cosmos_db_database_id
+  application_insights_id = module.monitoring.application_insights_id
+  key_vault_id        = module.security.key_vault_id
 }
 
 # Call security module
@@ -158,8 +163,6 @@ module "monitoring" {
   common_tags  = local.common_tags
   
   resource_group_name = azurerm_resource_group.main.name
-  function_app_ids    = module.compute.function_app_ids
-  container_app_ids   = module.compute.container_app_ids
   iot_hub_id         = module.iot_services.iot_hub_id
   cosmos_db_id       = module.storage.cosmos_db_id
   sql_database_id    = module.storage.sql_database_id

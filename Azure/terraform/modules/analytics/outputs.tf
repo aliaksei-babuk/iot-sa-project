@@ -17,37 +17,37 @@ output "stream_analytics_job_identity" {
 
 output "ml_workspace_id" {
   description = "ID of the Machine Learning workspace"
-  value       = azurerm_machine_learning_workspace.main.id
+  value       = var.application_insights_id != "" && var.key_vault_id != "" ? azurerm_machine_learning_workspace.main[0].id : null
 }
 
 output "ml_workspace_name" {
   description = "Name of the Machine Learning workspace"
-  value       = azurerm_machine_learning_workspace.main.name
+  value       = var.application_insights_id != "" && var.key_vault_id != "" ? azurerm_machine_learning_workspace.main[0].name : null
 }
 
 output "ml_workspace_identity" {
   description = "Identity of the Machine Learning workspace"
-  value       = azurerm_machine_learning_workspace.main.identity
+  value       = var.application_insights_id != "" && var.key_vault_id != "" ? azurerm_machine_learning_workspace.main[0].identity : null
 }
 
 output "ml_compute_cluster_id" {
   description = "ID of the Machine Learning compute cluster"
-  value       = azurerm_machine_learning_compute_cluster.main.id
+  value       = var.application_insights_id != "" && var.key_vault_id != "" ? azurerm_machine_learning_compute_cluster.main[0].id : null
 }
 
 output "ml_compute_cluster_name" {
   description = "Name of the Machine Learning compute cluster"
-  value       = azurerm_machine_learning_compute_cluster.main.name
+  value       = var.application_insights_id != "" && var.key_vault_id != "" ? azurerm_machine_learning_compute_cluster.main[0].name : null
 }
 
 output "ml_compute_instance_id" {
   description = "ID of the Machine Learning compute instance"
-  value       = azurerm_machine_learning_compute_instance.main.id
+  value       = var.application_insights_id != "" && var.key_vault_id != "" ? azurerm_machine_learning_compute_instance.main[0].id : null
 }
 
 output "ml_compute_instance_name" {
   description = "Name of the Machine Learning compute instance"
-  value       = azurerm_machine_learning_compute_instance.main.name
+  value       = var.application_insights_id != "" && var.key_vault_id != "" ? azurerm_machine_learning_compute_instance.main[0].name : null
 }
 
 output "time_series_insights_environment_id" {

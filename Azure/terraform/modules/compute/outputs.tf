@@ -39,27 +39,27 @@ output "function_app_identities" {
 output "container_app_ids" {
   description = "Map of container app names to IDs"
   value = {
-    ml_models  = azurerm_container_app.ml_models.id
-    analytics  = azurerm_container_app.analytics.id
+    ml_models  = var.log_analytics_workspace_id != "" ? azurerm_container_app.ml_models[0].id : null
+    analytics  = var.log_analytics_workspace_id != "" ? azurerm_container_app.analytics[0].id : null
   }
 }
 
 output "container_app_names" {
   description = "Map of container app names"
   value = {
-    ml_models  = azurerm_container_app.ml_models.name
-    analytics  = azurerm_container_app.analytics.name
+    ml_models  = var.log_analytics_workspace_id != "" ? azurerm_container_app.ml_models[0].name : null
+    analytics  = var.log_analytics_workspace_id != "" ? azurerm_container_app.analytics[0].name : null
   }
 }
 
 output "container_app_environment_id" {
   description = "ID of the Container App Environment"
-  value       = azurerm_container_app_environment.main.id
+  value       = var.log_analytics_workspace_id != "" ? azurerm_container_app_environment.main[0].id : null
 }
 
 output "container_app_environment_name" {
   description = "Name of the Container App Environment"
-  value       = azurerm_container_app_environment.main.name
+  value       = var.log_analytics_workspace_id != "" ? azurerm_container_app_environment.main[0].name : null
 }
 
 output "logic_app_workflow_ids" {
@@ -116,7 +116,7 @@ output "eventgrid_system_topic_ids" {
   description = "Map of Event Grid system topic names to IDs"
   value = {
     functions  = azurerm_eventgrid_system_topic.functions.id
-    containers = azurerm_eventgrid_system_topic.containers.id
+    containers = var.log_analytics_workspace_id != "" ? azurerm_eventgrid_system_topic.containers[0].id : null
   }
 }
 

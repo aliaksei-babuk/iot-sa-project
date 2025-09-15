@@ -2,7 +2,7 @@
 
 # Storage Account for Function Apps
 resource "azurerm_storage_account" "functions" {
-  name                     = "${var.project_name}${var.environment}functions${var.suffix}"
+  name                     = "${substr(replace(var.project_name, "-", ""), 0, 6)}${var.environment}func${substr(replace(var.suffix, "-", ""), 0, 6)}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
@@ -48,6 +48,8 @@ resource "azurerm_linux_function_app" "audio_processing" {
     "EVENT_HUB_CONNECTION_STRING" = var.event_hub_connection_string
     "SERVICE_BUS_CONNECTION_STRING" = var.service_bus_connection_string
     "PYTHON_ENABLE_WORKER_EXTENSIONS" = "1"
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = var.application_insights_instrumentation_key
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = "InstrumentationKey=${var.application_insights_instrumentation_key}"
   }
 
   identity {
@@ -82,6 +84,8 @@ resource "azurerm_linux_function_app" "ml_inference" {
     "EVENT_HUB_CONNECTION_STRING" = var.event_hub_connection_string
     "SERVICE_BUS_CONNECTION_STRING" = var.service_bus_connection_string
     "PYTHON_ENABLE_WORKER_EXTENSIONS" = "1"
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = var.application_insights_instrumentation_key
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = "InstrumentationKey=${var.application_insights_instrumentation_key}"
   }
 
   identity {
@@ -124,6 +128,7 @@ resource "azurerm_linux_function_app" "alert_processing" {
 
 # Container App Environment
 resource "azurerm_container_app_environment" "main" {
+  count                      = var.log_analytics_workspace_id != "" ? 1 : 0
   name                       = "${var.project_name}-${var.environment}-container-env-${var.suffix}"
   location                   = var.location
   resource_group_name        = var.resource_group_name
@@ -136,8 +141,9 @@ resource "azurerm_container_app_environment" "main" {
 
 # Container App - ML Models
 resource "azurerm_container_app" "ml_models" {
+  count                        = var.log_analytics_workspace_id != "" ? 1 : 0
   name                         = "${var.project_name}-${var.environment}-ml-models-${var.suffix}"
-  container_app_environment_id = azurerm_container_app_environment.main.id
+  container_app_environment_id = azurerm_container_app_environment.main[0].id
   resource_group_name          = var.resource_group_name
   revision_mode                = "Single"
   tags                         = var.common_tags
@@ -157,6 +163,16 @@ resource "azurerm_container_app" "ml_models" {
       env {
         name  = "API_PORT"
         value = "8080"
+      }
+
+      env {
+        name  = "APPINSIGHTS_INSTRUMENTATIONKEY"
+        value = var.application_insights_instrumentation_key
+      }
+
+      env {
+        name  = "APPLICATIONINSIGHTS_CONNECTION_STRING"
+        value = "InstrumentationKey=${var.application_insights_instrumentation_key}"
       }
     }
 
@@ -179,8 +195,9 @@ resource "azurerm_container_app" "ml_models" {
 
 # Container App - Analytics
 resource "azurerm_container_app" "analytics" {
+  count                        = var.log_analytics_workspace_id != "" ? 1 : 0
   name                         = "${var.project_name}-${var.environment}-analytics-${var.suffix}"
-  container_app_environment_id = azurerm_container_app_environment.main.id
+  container_app_environment_id = azurerm_container_app_environment.main[0].id
   resource_group_name          = var.resource_group_name
   revision_mode                = "Single"
   tags                         = var.common_tags
@@ -195,6 +212,16 @@ resource "azurerm_container_app" "analytics" {
       env {
         name  = "ANALYTICS_PORT"
         value = "8080"
+      }
+
+      env {
+        name  = "APPINSIGHTS_INSTRUMENTATIONKEY"
+        value = var.application_insights_instrumentation_key
+      }
+
+      env {
+        name  = "APPLICATIONINSIGHTS_CONNECTION_STRING"
+        value = "InstrumentationKey=${var.application_insights_instrumentation_key}"
       }
     }
 
@@ -251,10 +278,11 @@ resource "azurerm_eventgrid_system_topic" "functions" {
 
 # Event Grid System Topic for Container Apps
 resource "azurerm_eventgrid_system_topic" "containers" {
+  count               = var.log_analytics_workspace_id != "" ? 1 : 0
   name                = "${var.project_name}-${var.environment}-containers-events-${var.suffix}"
   location            = var.location
   resource_group_name = var.resource_group_name
-  source_arm_resource_id = azurerm_container_app.ml_models.id
+  source_arm_resource_id = azurerm_container_app.ml_models[0].id
   topic_type          = "Microsoft.ContainerApps.ContainerApp"
   tags                = var.common_tags
 }
@@ -278,7 +306,7 @@ resource "azurerm_private_endpoint" "functions_storage" {
 
 # Private DNS Records for Function Apps (if private endpoints enabled)
 resource "azurerm_private_dns_a_record" "functions_storage" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "storage") ? 1 : 0
   name                = azurerm_storage_account.functions.name
   zone_name           = var.private_dns_zone_names["storage"]
   resource_group_name = var.resource_group_name

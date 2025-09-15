@@ -54,49 +54,8 @@ output "application_insights_app_id" {
   value       = azurerm_application_insights.main.app_id
 }
 
-output "function_app_insights_ids" {
-  description = "Map of function app names to Application Insights IDs"
-  value = {
-    for k, v in azurerm_application_insights.functions : k => v.id
-  }
-}
-
-output "function_app_insights_names" {
-  description = "Map of function app names to Application Insights names"
-  value = {
-    for k, v in azurerm_application_insights.functions : k => v.name
-  }
-}
-
-output "function_app_insights_instrumentation_keys" {
-  description = "Map of function app names to Application Insights instrumentation keys"
-  value = {
-    for k, v in azurerm_application_insights.functions : k => v.instrumentation_key
-  }
-  sensitive = true
-}
-
-output "container_app_insights_ids" {
-  description = "Map of container app names to Application Insights IDs"
-  value = {
-    for k, v in azurerm_application_insights.containers : k => v.id
-  }
-}
-
-output "container_app_insights_names" {
-  description = "Map of container app names to Application Insights names"
-  value = {
-    for k, v in azurerm_application_insights.containers : k => v.name
-  }
-}
-
-output "container_app_insights_instrumentation_keys" {
-  description = "Map of container app names to Application Insights instrumentation keys"
-  value = {
-    for k, v in azurerm_application_insights.containers : k => v.instrumentation_key
-  }
-  sensitive = true
-}
+# Note: All services now use the single main Application Insights instance
+# Use application_insights_id, application_insights_name, etc. for all services
 
 output "action_group_id" {
   description = "ID of the action group"

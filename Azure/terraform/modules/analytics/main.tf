@@ -80,13 +80,14 @@ resource "azurerm_stream_analytics_output_blob" "main" {
 
 # Machine Learning Workspace
 resource "azurerm_machine_learning_workspace" "main" {
-  name                    = "${var.project_name}-${var.environment}-ml-${var.suffix}"
-  location                = var.location
-  resource_group_name     = var.resource_group_name
+  count               = var.application_insights_id != "" && var.key_vault_id != "" ? 1 : 0
+  name                = "${substr(replace(var.project_name, "-", ""), 0, 8)}${var.environment}ml${substr(replace(var.suffix, "-", ""), 0, 8)}"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  storage_account_id  = var.storage_account_id
   application_insights_id = var.application_insights_id
   key_vault_id            = var.key_vault_id
-  storage_account_id      = var.storage_account_id
-  tags                    = var.common_tags
+  tags                = var.common_tags
 
   identity {
     type = "SystemAssigned"
@@ -95,11 +96,12 @@ resource "azurerm_machine_learning_workspace" "main" {
 
 # Machine Learning Compute Cluster
 resource "azurerm_machine_learning_compute_cluster" "main" {
+  count                         = var.application_insights_id != "" && var.key_vault_id != "" ? 1 : 0
   name                          = "${var.project_name}-${var.environment}-ml-cluster-${var.suffix}"
   location                      = var.location
   vm_priority                   = "Dedicated"
   vm_size                       = "STANDARD_DS2_V2"
-  machine_learning_workspace_id = azurerm_machine_learning_workspace.main.id
+  machine_learning_workspace_id = azurerm_machine_learning_workspace.main[0].id
   tags                          = var.common_tags
 
   scale_settings {
@@ -115,9 +117,10 @@ resource "azurerm_machine_learning_compute_cluster" "main" {
 
 # Machine Learning Compute Instance
 resource "azurerm_machine_learning_compute_instance" "main" {
+  count                         = var.application_insights_id != "" && var.key_vault_id != "" ? 1 : 0
   name                          = "${var.project_name}-${var.environment}-ml-instance-${var.suffix}"
   location                      = var.location
-  machine_learning_workspace_id = azurerm_machine_learning_workspace.main.id
+  machine_learning_workspace_id = azurerm_machine_learning_workspace.main[0].id
   virtual_machine_size          = "STANDARD_DS2_V2"
   tags                          = var.common_tags
 
@@ -148,7 +151,8 @@ resource "azurerm_iot_time_series_insights_event_source_eventhub" "main" {
   location                 = var.location
   environment_id           = azurerm_iot_time_series_insights_gen2_environment.main.id
   eventhub_name            = var.event_hub_name
-  servicebus_namespace_id  = var.event_hub_namespace_id
+  namespace_name           = var.event_hub_namespace
+  event_source_resource_id = var.event_hub_namespace_id
   shared_access_key        = var.event_hub_shared_access_key
   shared_access_key_name   = "RootManageSharedAccessKey"
   consumer_group_name      = "$Default"

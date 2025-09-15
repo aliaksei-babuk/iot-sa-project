@@ -45,13 +45,15 @@ resource "azurerm_iothub" "main" {
   }
 
   enrichment {
-    key   = "tenant"
-    value = var.environment
+    key            = "tenant"
+    value          = var.environment
+    endpoint_names = ["events"]
   }
 
   enrichment {
-    key   = "deviceLocation"
-    value = "$twin.tags.location"
+    key            = "deviceLocation"
+    value          = "$twin.tags.location"
+    endpoint_names = ["events"]
   }
 
   cloud_to_device {
@@ -78,7 +80,7 @@ resource "azurerm_iothub_consumer_group" "main" {
 
 # Storage Account for IoT Hub
 resource "azurerm_storage_account" "iot_hub" {
-  name                     = "${var.project_name}${var.environment}iothub${var.suffix}"
+  name                     = "${substr(replace(var.project_name, "-", ""), 0, 6)}${var.environment}iot${substr(replace(var.suffix, "-", ""), 0, 6)}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
@@ -269,7 +271,7 @@ resource "azurerm_private_endpoint" "servicebus" {
 
 # Private DNS Records (if private endpoints enabled)
 resource "azurerm_private_dns_a_record" "iot_hub" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "servicebus") ? 1 : 0
   name                = azurerm_iothub.main.name
   zone_name           = var.private_dns_zone_names["servicebus"]
   resource_group_name = var.resource_group_name
@@ -278,7 +280,7 @@ resource "azurerm_private_dns_a_record" "iot_hub" {
 }
 
 resource "azurerm_private_dns_a_record" "eventhub" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "servicebus") ? 1 : 0
   name                = azurerm_eventhub_namespace.main.name
   zone_name           = var.private_dns_zone_names["servicebus"]
   resource_group_name = var.resource_group_name
@@ -287,7 +289,7 @@ resource "azurerm_private_dns_a_record" "eventhub" {
 }
 
 resource "azurerm_private_dns_a_record" "servicebus" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "servicebus") ? 1 : 0
   name                = azurerm_servicebus_namespace.main.name
   zone_name           = var.private_dns_zone_names["servicebus"]
   resource_group_name = var.resource_group_name

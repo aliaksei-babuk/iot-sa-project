@@ -26,41 +26,8 @@ resource "azurerm_application_insights" "main" {
   disable_ip_masking                     = false
 }
 
-# Application Insights for Function Apps
-resource "azurerm_application_insights" "functions" {
-  for_each = var.function_app_ids
-
-  name                = "${var.project_name}-${var.environment}-functions-${each.key}-insights-${var.suffix}"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  workspace_id        = azurerm_log_analytics_workspace.main.id
-  application_type    = "web"
-  tags                = var.common_tags
-
-  daily_data_cap_in_gb                  = 50
-  daily_data_cap_notifications_disabled = false
-  retention_in_days                      = var.retention_days
-  sampling_percentage                    = 100
-  disable_ip_masking                     = false
-}
-
-# Application Insights for Container Apps
-resource "azurerm_application_insights" "containers" {
-  for_each = var.container_app_ids
-
-  name                = "${var.project_name}-${var.environment}-containers-${each.key}-insights-${var.suffix}"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  workspace_id        = azurerm_log_analytics_workspace.main.id
-  application_type    = "web"
-  tags                = var.common_tags
-
-  daily_data_cap_in_gb                  = 50
-  daily_data_cap_notifications_disabled = false
-  retention_in_days                      = var.retention_days
-  sampling_percentage                    = 100
-  disable_ip_masking                     = false
-}
+# Note: Using single Application Insights instance for all services
+# Function Apps and Container Apps will use the main Application Insights instance
 
 # Action Group for Alerts
 resource "azurerm_monitor_action_group" "main" {
@@ -69,9 +36,12 @@ resource "azurerm_monitor_action_group" "main" {
   short_name          = "iot-alerts"
   tags                = var.common_tags
 
-  email_receiver {
-    name          = "admin"
-    email_address = var.admin_email
+  dynamic "email_receiver" {
+    for_each = var.admin_email != "" ? [1] : []
+    content {
+      name          = "admin"
+      email_address = var.admin_email
+    }
   }
 
   dynamic "email_receiver" {
@@ -152,7 +122,7 @@ resource "azurerm_monitor_metric_alert" "function_response_time" {
 
 # Metric Alert - IoT Hub Message Count
 resource "azurerm_monitor_metric_alert" "iot_hub_messages" {
-  count = var.iot_hub_id != "" ? 1 : 0
+  count = var.enable_iot_hub_alerts ? 1 : 0
 
   name                = "${var.project_name}-${var.environment}-iot-hub-messages-${var.suffix}"
   resource_group_name = var.resource_group_name
@@ -177,7 +147,7 @@ resource "azurerm_monitor_metric_alert" "iot_hub_messages" {
 
 # Metric Alert - Cosmos DB Request Units
 resource "azurerm_monitor_metric_alert" "cosmos_db_ru" {
-  count = var.cosmos_db_id != "" ? 1 : 0
+  count = var.enable_cosmos_db_alerts ? 1 : 0
 
   name                = "${var.project_name}-${var.environment}-cosmos-db-ru-${var.suffix}"
   resource_group_name = var.resource_group_name
@@ -202,7 +172,7 @@ resource "azurerm_monitor_metric_alert" "cosmos_db_ru" {
 
 # Metric Alert - SQL Database DTU
 resource "azurerm_monitor_metric_alert" "sql_database_dtu" {
-  count = var.sql_database_id != "" ? 1 : 0
+  count = var.enable_sql_database_alerts ? 1 : 0
 
   name                = "${var.project_name}-${var.environment}-sql-db-dtu-${var.suffix}"
   resource_group_name = var.resource_group_name

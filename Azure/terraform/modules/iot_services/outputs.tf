@@ -17,7 +17,7 @@ output "iot_hub_hostname" {
 
 output "iot_hub_connection_string" {
   description = "Connection string for the IoT Hub"
-  value       = azurerm_iothub.main.shared_access_policy[0].primary_connection_string
+  value       = "HostName=${azurerm_iothub.main.hostname};SharedAccessKeyName=${azurerm_iothub.main.shared_access_policy[0].key_name};SharedAccessKey=${azurerm_iothub.main.shared_access_policy[0].primary_key}"
   sensitive   = true
 }
 

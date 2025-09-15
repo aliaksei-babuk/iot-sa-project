@@ -68,14 +68,14 @@ output "security_center_workspace_id" {
 
 output "private_endpoint_ids" {
   description = "Map of private endpoint names to IDs"
-  value = var.enable_private_endpoints ? {
+  value = var.enable_private_endpoints && contains(keys(var.subnet_ids), "private-data") ? {
     key_vault = azurerm_private_endpoint.key_vault[0].id
   } : {}
 }
 
 output "ad_application_id" {
   description = "ID of the Azure AD application"
-  value       = var.enable_ad_app_registration ? azuread_application.main[0].application_id : null
+  value       = var.enable_ad_app_registration ? azuread_application.main[0].client_id : null
 }
 
 output "ad_application_object_id" {
