@@ -1,15 +1,7 @@
 # Azure IoT Sound Analytics - Main Terraform Configuration
 # This configuration deploys a serverless architecture for real-time sound analytics
 
-terraform {
-  required_version = ">= 1.0"
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 3.0"
-    }
-  }
-}
+# Terraform version and provider requirements are defined in versions.tf
 
 # Configure the Azure Provider
 provider "azurerm" {

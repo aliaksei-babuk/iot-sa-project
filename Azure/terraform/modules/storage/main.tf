@@ -99,7 +99,7 @@ resource "azurerm_cosmosdb_sql_container" "real_time_data" {
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name
-  partition_key_path  = "/deviceId"
+  partition_key_paths = ["/deviceId"]
   throughput          = var.cosmos_db_throughput
 
   indexing_policy {
@@ -125,7 +125,7 @@ resource "azurerm_cosmosdb_sql_container" "alerts" {
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name
-  partition_key_path  = "/alertId"
+  partition_key_paths = ["/alertId"]
   throughput          = var.cosmos_db_throughput
 
   indexing_policy {
@@ -151,7 +151,7 @@ resource "azurerm_cosmosdb_sql_container" "device_metadata" {
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name
-  partition_key_path  = "/deviceId"
+  partition_key_paths = ["/deviceId"]
   throughput          = var.cosmos_db_throughput
 
   indexing_policy {

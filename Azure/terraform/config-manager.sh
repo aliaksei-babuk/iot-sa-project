@@ -62,7 +62,7 @@ create_environment_config() {
     if [ ! -f "${template_file}" ]; then
         print_status "Creating template for ${environment}..."
         cat > "${template_file}" << EOF
-# Azure IoT Sound Analytics - ${environment^} Environment Configuration
+# Azure IoT Sound Analytics - Dev Environment Configuration
 # Generated on $(date)
 
 # Environment Configuration
@@ -166,11 +166,13 @@ EOF
     local current_user=$(az account show --query "user.name" -o tsv 2>/dev/null || echo "Unknown")
     
     # Update admin email
-    sed -i "s/admin_email = \"admin@yourcompany.com\"/admin_email = \"${current_user}\"/" "${config_file}"
+    sed -i.bak "s/admin_email = \"admin@yourcompany.com\"/admin_email = \"${current_user}\"/" "${config_file}"
+    rm -f "${config_file}.bak"
     
     # Update Azure AD admin object ID
     local object_id=$(az ad signed-in-user show --query "id" -o tsv 2>/dev/null || echo "00000000-0000-0000-0000-000000000000")
-    sed -i "s/azure_ad_admin_object_id = \"00000000-0000-0000-0000-000000000000\"/azure_ad_admin_object_id = \"${object_id}\"/" "${config_file}"
+    sed -i.bak "s/azure_ad_admin_object_id = \"00000000-0000-0000-0000-000000000000\"/azure_ad_admin_object_id = \"${object_id}\"/" "${config_file}"
+    rm -f "${config_file}.bak"
     
     print_success "Configuration created: ${config_file}"
     print_status "Please review and customize the configuration before deployment"
@@ -324,10 +326,11 @@ switch_environment() {
     fi
     
     # Create new symlink
-    ln -s "${config_file}" "terraform.tfvars"
+    ln -sf "${config_file}" "terraform.tfvars"
     
     print_success "Switched to ${environment} environment"
     print_status "Active configuration: ${config_file}"
+    print_status "Symlink created: terraform.tfvars -> ${config_file}"
 }
 
 # Function to backup configuration

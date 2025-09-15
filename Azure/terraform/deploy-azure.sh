@@ -193,6 +193,14 @@ create_config() {
         print_status "Using existing terraform.tfvars configuration"
     fi
     
+    # Create symlink to active configuration
+    local active_config="terraform.tfvars"
+    if [ -L "${active_config}" ]; then
+        rm "${active_config}"
+    fi
+    ln -s "${config_file}" "${active_config}"
+    print_status "Created symlink: ${active_config} -> ${config_file}"
+    
     print_success "Configuration setup completed"
 }
 
@@ -202,9 +210,20 @@ validate_config() {
     
     local config_file="${TERRAFORM_DIR}/terraform.tfvars"
     
+    # Check if terraform.tfvars exists (symlink or file)
     if [ ! -f "${config_file}" ]; then
-        print_error "terraform.tfvars not found"
-        exit 1
+        # Check if there are any config files in the config directory
+        if [ -d "${CONFIG_DIR}" ] && [ "$(ls -A ${CONFIG_DIR} 2>/dev/null)" ]; then
+            print_warning "terraform.tfvars not found, but configuration files exist in config/ directory"
+            print_status "Available configurations:"
+            ls -la "${CONFIG_DIR}"/*.tfvars 2>/dev/null || true
+            print_status "Please run: ./config-manager.sh switch <environment> to select a configuration"
+            exit 1
+        else
+            print_error "terraform.tfvars not found and no configuration files exist"
+            print_status "Please run: ./config-manager.sh setup <environment> to create a configuration"
+            exit 1
+        fi
     fi
     
     # Validate required variables

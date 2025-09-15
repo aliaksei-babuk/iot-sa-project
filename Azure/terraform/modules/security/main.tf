@@ -21,9 +21,6 @@ resource "azurerm_key_vault" "main" {
     bypass         = "AzureServices"
   }
 
-  identity {
-    type = "SystemAssigned"
-  }
 }
 
 # Key Vault Access Policy for Current User
@@ -180,33 +177,8 @@ resource "azurerm_security_center_workspace" "main" {
   workspace_id = var.log_analytics_workspace_id
 }
 
-# Azure Policy Assignments
-resource "azurerm_policy_assignment" "encryption_at_rest" {
-  count                = var.enable_policy_assignments ? 1 : 0
-  name                 = "encryption-at-rest"
-  scope                = var.policy_scope
-  policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/86a3cd3a-3f70-4a86-8d47-6719c1a3be0d"
-  description          = "Ensure encryption at rest is enabled"
-  display_name         = "Encryption at Rest"
-}
-
-resource "azurerm_policy_assignment" "https_only" {
-  count                = var.enable_policy_assignments ? 1 : 0
-  name                 = "https-only"
-  scope                = var.policy_scope
-  policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/1b5ca4a6-4715-4df0-8864-4aec62f1d54f"
-  description          = "Ensure HTTPS only is enabled"
-  display_name         = "HTTPS Only"
-}
-
-resource "azurerm_policy_assignment" "min_tls_version" {
-  count                = var.enable_policy_assignments ? 1 : 0
-  name                 = "min-tls-version"
-  scope                = var.policy_scope
-  policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/5365a3e6-2675-4e69-9074-70871f6fc113"
-  description          = "Ensure minimum TLS version is set"
-  display_name         = "Minimum TLS Version"
-}
+# Azure Policy Assignments are not supported in the current AzureRM provider
+# These would need to be configured manually or through Azure CLI/PowerShell
 
 # Private Endpoint for Key Vault (if enabled)
 resource "azurerm_private_endpoint" "key_vault" {

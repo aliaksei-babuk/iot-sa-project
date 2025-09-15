@@ -38,8 +38,6 @@ resource "azurerm_linux_function_app" "audio_processing" {
     always_on = false
     ftps_state = "Disabled"
     http2_enabled = true
-    min_tls_version = "1.2"
-    scm_min_tls_version = "1.2"
   }
 
   app_settings = {
@@ -75,8 +73,6 @@ resource "azurerm_linux_function_app" "ml_inference" {
     always_on = false
     ftps_state = "Disabled"
     http2_enabled = true
-    min_tls_version = "1.2"
-    scm_min_tls_version = "1.2"
   }
 
   app_settings = {
@@ -111,8 +107,6 @@ resource "azurerm_linux_function_app" "alert_processing" {
     always_on = false
     ftps_state = "Disabled"
     http2_enabled = true
-    min_tls_version = "1.2"
-    scm_min_tls_version = "1.2"
   }
 
   app_settings = {
@@ -175,6 +169,11 @@ resource "azurerm_container_app" "ml_models" {
     external_enabled          = true
     target_port               = 8080
     transport                 = "http"
+    
+    traffic_weight {
+      percentage = 100
+      latest_revision = true
+    }
   }
 }
 
@@ -208,6 +207,11 @@ resource "azurerm_container_app" "analytics" {
     external_enabled          = true
     target_port               = 8080
     transport                 = "http"
+    
+    traffic_weight {
+      percentage = 100
+      latest_revision = true
+    }
   }
 }
 

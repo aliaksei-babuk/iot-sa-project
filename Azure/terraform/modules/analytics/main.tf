@@ -14,6 +14,19 @@ resource "azurerm_stream_analytics_job" "main" {
   streaming_units                          = 3
   tags                                     = var.common_tags
 
+  transformation_query = <<EOF
+SELECT
+    System.Timestamp() AS WindowEnd,
+    deviceId,
+    COUNT(*) AS EventCount
+INTO
+    [cosmosdb-output]
+FROM
+    [eventhub-input] TIMESTAMP BY EventEnqueuedUtcTime
+GROUP BY
+    TumblingWindow(second, 10), deviceId
+EOF
+
   identity {
     type = "SystemAssigned"
   }
@@ -39,12 +52,12 @@ resource "azurerm_stream_analytics_stream_input_eventhub" "main" {
 # Stream Analytics Output - Cosmos DB
 resource "azurerm_stream_analytics_output_cosmosdb" "main" {
   name                     = "cosmosdb-output"
-  stream_analytics_job_name = azurerm_stream_analytics_job.main.name
-  resource_group_name      = var.resource_group_name
+  stream_analytics_job_id  = azurerm_stream_analytics_job.main.id
   cosmosdb_sql_database_id = var.cosmos_db_database_id
   container_name           = "real-time-data"
   document_id              = "deviceId"
   partition_key            = "deviceId"
+  cosmosdb_account_key     = var.cosmos_db_key
 }
 
 # Stream Analytics Output - Blob Storage
@@ -121,8 +134,6 @@ resource "azurerm_iot_time_series_insights_gen2_environment" "main" {
   sku_name            = "L1"
   tags                = var.common_tags
 
-  data_retention_time = "P30D"
-
   storage {
     name = "${var.project_name}${var.environment}tsi${var.suffix}"
     key  = var.storage_account_key
@@ -180,7 +191,6 @@ resource "azurerm_data_factory_linked_service_cosmosdb" "cosmos" {
   data_factory_id     = azurerm_data_factory.main.id
   account_endpoint    = var.cosmos_db_endpoint
   account_key         = var.cosmos_db_key
-  database_name       = "sound-analytics"
 }
 
 # Data Factory Pipeline - Data Processing
@@ -188,7 +198,6 @@ resource "azurerm_data_factory_pipeline" "data_processing" {
   name        = "data-processing-pipeline"
   data_factory_id = azurerm_data_factory.main.id
   description = "Pipeline for processing sound analytics data"
-  tags        = var.common_tags
 }
 
 # Data Factory Dataset - Audio Files
@@ -199,8 +208,9 @@ resource "azurerm_data_factory_dataset_azure_blob" "audio_files" {
   path                = "audio-files"
   filename            = "*.wav"
 
-  json_property {
-    type = "Json"
+  schema_column {
+    name = "data"
+    type = "String"
   }
 }
 
@@ -212,8 +222,9 @@ resource "azurerm_data_factory_dataset_azure_blob" "processed_data" {
   path                = "processed-data"
   filename            = "*.json"
 
-  json_property {
-    type = "Json"
+  schema_column {
+    name = "data"
+    type = "String"
   }
 }
 

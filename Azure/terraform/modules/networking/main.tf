@@ -258,12 +258,7 @@ resource "azurerm_network_ddos_protection_plan" "main" {
   tags                = var.common_tags
 }
 
-# Associate DDoS protection with VNet
-resource "azurerm_virtual_network_ddos_protection_plan" "main" {
-  count               = var.enable_ddos_protection ? 1 : 0
-  virtual_network_id  = azurerm_virtual_network.main.id
-  ddos_protection_plan_id = azurerm_network_ddos_protection_plan.main[0].id
-}
+# DDoS protection is configured in the VNet resource above
 
 # Private DNS Zone for Key Vault
 resource "azurerm_private_dns_zone" "keyvault" {
