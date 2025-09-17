@@ -14,6 +14,19 @@ resource "azurerm_stream_analytics_job" "main" {
   streaming_units                          = 3
   tags                                     = var.common_tags
 
+  transformation_query = <<EOF
+SELECT
+    System.Timestamp() AS WindowEnd,
+    deviceId,
+    COUNT(*) AS EventCount
+INTO
+    [cosmosdb-output]
+FROM
+    [eventhub-input] TIMESTAMP BY EventEnqueuedUtcTime
+GROUP BY
+    TumblingWindow(second, 10), deviceId
+EOF
+
   identity {
     type = "SystemAssigned"
   }
@@ -39,12 +52,12 @@ resource "azurerm_stream_analytics_stream_input_eventhub" "main" {
 # Stream Analytics Output - Cosmos DB
 resource "azurerm_stream_analytics_output_cosmosdb" "main" {
   name                     = "cosmosdb-output"
-  stream_analytics_job_name = azurerm_stream_analytics_job.main.name
-  resource_group_name      = var.resource_group_name
+  stream_analytics_job_id  = azurerm_stream_analytics_job.main.id
   cosmosdb_sql_database_id = var.cosmos_db_database_id
   container_name           = "real-time-data"
   document_id              = "deviceId"
   partition_key            = "deviceId"
+  cosmosdb_account_key     = var.cosmos_db_key
 }
 
 # Stream Analytics Output - Blob Storage
@@ -67,13 +80,14 @@ resource "azurerm_stream_analytics_output_blob" "main" {
 
 # Machine Learning Workspace
 resource "azurerm_machine_learning_workspace" "main" {
-  name                    = "${var.project_name}-${var.environment}-ml-${var.suffix}"
-  location                = var.location
-  resource_group_name     = var.resource_group_name
+  count               = var.application_insights_id != "" && var.key_vault_id != "" ? 1 : 0
+  name                = "${substr(replace(var.project_name, "-", ""), 0, 8)}${var.environment}ml${substr(replace(var.suffix, "-", ""), 0, 8)}"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  storage_account_id  = var.storage_account_id
   application_insights_id = var.application_insights_id
   key_vault_id            = var.key_vault_id
-  storage_account_id      = var.storage_account_id
-  tags                    = var.common_tags
+  tags                = var.common_tags
 
   identity {
     type = "SystemAssigned"
@@ -82,11 +96,12 @@ resource "azurerm_machine_learning_workspace" "main" {
 
 # Machine Learning Compute Cluster
 resource "azurerm_machine_learning_compute_cluster" "main" {
+  count                         = var.application_insights_id != "" && var.key_vault_id != "" ? 1 : 0
   name                          = "${var.project_name}-${var.environment}-ml-cluster-${var.suffix}"
   location                      = var.location
   vm_priority                   = "Dedicated"
   vm_size                       = "STANDARD_DS2_V2"
-  machine_learning_workspace_id = azurerm_machine_learning_workspace.main.id
+  machine_learning_workspace_id = azurerm_machine_learning_workspace.main[0].id
   tags                          = var.common_tags
 
   scale_settings {
@@ -102,9 +117,10 @@ resource "azurerm_machine_learning_compute_cluster" "main" {
 
 # Machine Learning Compute Instance
 resource "azurerm_machine_learning_compute_instance" "main" {
+  count                         = var.application_insights_id != "" && var.key_vault_id != "" ? 1 : 0
   name                          = "${var.project_name}-${var.environment}-ml-instance-${var.suffix}"
   location                      = var.location
-  machine_learning_workspace_id = azurerm_machine_learning_workspace.main.id
+  machine_learning_workspace_id = azurerm_machine_learning_workspace.main[0].id
   virtual_machine_size          = "STANDARD_DS2_V2"
   tags                          = var.common_tags
 
@@ -121,8 +137,6 @@ resource "azurerm_iot_time_series_insights_gen2_environment" "main" {
   sku_name            = "L1"
   tags                = var.common_tags
 
-  data_retention_time = "P30D"
-
   storage {
     name = "${var.project_name}${var.environment}tsi${var.suffix}"
     key  = var.storage_account_key
@@ -137,7 +151,8 @@ resource "azurerm_iot_time_series_insights_event_source_eventhub" "main" {
   location                 = var.location
   environment_id           = azurerm_iot_time_series_insights_gen2_environment.main.id
   eventhub_name            = var.event_hub_name
-  servicebus_namespace_id  = var.event_hub_namespace_id
+  namespace_name           = var.event_hub_namespace
+  event_source_resource_id = var.event_hub_namespace_id
   shared_access_key        = var.event_hub_shared_access_key
   shared_access_key_name   = "RootManageSharedAccessKey"
   consumer_group_name      = "$Default"
@@ -180,7 +195,6 @@ resource "azurerm_data_factory_linked_service_cosmosdb" "cosmos" {
   data_factory_id     = azurerm_data_factory.main.id
   account_endpoint    = var.cosmos_db_endpoint
   account_key         = var.cosmos_db_key
-  database_name       = "sound-analytics"
 }
 
 # Data Factory Pipeline - Data Processing
@@ -188,7 +202,6 @@ resource "azurerm_data_factory_pipeline" "data_processing" {
   name        = "data-processing-pipeline"
   data_factory_id = azurerm_data_factory.main.id
   description = "Pipeline for processing sound analytics data"
-  tags        = var.common_tags
 }
 
 # Data Factory Dataset - Audio Files
@@ -199,8 +212,9 @@ resource "azurerm_data_factory_dataset_azure_blob" "audio_files" {
   path                = "audio-files"
   filename            = "*.wav"
 
-  json_property {
-    type = "Json"
+  schema_column {
+    name = "data"
+    type = "String"
   }
 }
 
@@ -212,8 +226,9 @@ resource "azurerm_data_factory_dataset_azure_blob" "processed_data" {
   path                = "processed-data"
   filename            = "*.json"
 
-  json_property {
-    type = "Json"
+  schema_column {
+    name = "data"
+    type = "String"
   }
 }
 

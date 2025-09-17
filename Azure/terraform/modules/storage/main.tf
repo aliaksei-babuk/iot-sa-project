@@ -2,7 +2,7 @@
 
 # Storage Account for Blob Storage and Data Lake
 resource "azurerm_storage_account" "main" {
-  name                     = "${var.project_name}${var.environment}storage${var.suffix}"
+  name                     = "${substr(replace(var.project_name, "-", ""), 0, 6)}${var.environment}stor${substr(replace(var.suffix, "-", ""), 0, 6)}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
@@ -15,6 +15,7 @@ resource "azurerm_storage_account" "main" {
     versioning_enabled       = true
     change_feed_enabled      = true
     change_feed_retention_in_days = 7
+    allow_nested_items_to_be_public = false
     delete_retention_policy {
       days = 30
     }
@@ -90,7 +91,7 @@ resource "azurerm_cosmosdb_sql_database" "main" {
   name                = "sound-analytics"
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.main.name
-  throughput          = var.cosmos_db_throughput
+  # Note: No throughput specified for serverless accounts
 }
 
 # Cosmos DB Container for Real-time Data
@@ -99,8 +100,8 @@ resource "azurerm_cosmosdb_sql_container" "real_time_data" {
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name
-  partition_key_path  = "/deviceId"
-  throughput          = var.cosmos_db_throughput
+  partition_key_paths = ["/deviceId"]
+  # Note: No throughput specified for serverless accounts
 
   indexing_policy {
     indexing_mode = "consistent"
@@ -125,8 +126,8 @@ resource "azurerm_cosmosdb_sql_container" "alerts" {
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name
-  partition_key_path  = "/alertId"
-  throughput          = var.cosmos_db_throughput
+  partition_key_paths = ["/alertId"]
+  # Note: No throughput specified for serverless accounts
 
   indexing_policy {
     indexing_mode = "consistent"
@@ -151,8 +152,8 @@ resource "azurerm_cosmosdb_sql_container" "device_metadata" {
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name
-  partition_key_path  = "/deviceId"
-  throughput          = var.cosmos_db_throughput
+  partition_key_paths = ["/deviceId"]
+  # Note: No throughput specified for serverless accounts
 
   indexing_policy {
     indexing_mode = "consistent"
@@ -186,9 +187,12 @@ resource "azurerm_mssql_server" "main" {
     type = "SystemAssigned"
   }
 
-  azuread_administrator {
-    login_username = var.azure_ad_admin_login
-    object_id      = var.azure_ad_admin_object_id
+  dynamic "azuread_administrator" {
+    for_each = var.azure_ad_admin_login != "" && var.azure_ad_admin_object_id != "" ? [1] : []
+    content {
+      login_username = var.azure_ad_admin_login
+      object_id      = var.azure_ad_admin_object_id
+    }
   }
 }
 
@@ -304,7 +308,7 @@ resource "azurerm_private_endpoint" "redis" {
 
 # Private DNS Records (if private endpoints enabled)
 resource "azurerm_private_dns_a_record" "storage" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "storage") ? 1 : 0
   name                = azurerm_storage_account.main.name
   zone_name           = var.private_dns_zone_names["storage"]
   resource_group_name = var.resource_group_name
@@ -314,7 +318,7 @@ resource "azurerm_private_dns_a_record" "storage" {
 }
 
 resource "azurerm_private_dns_a_record" "cosmos_db" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "sql") ? 1 : 0
   name                = azurerm_cosmosdb_account.main.name
   zone_name           = var.private_dns_zone_names["sql"]
   resource_group_name = var.resource_group_name
@@ -324,7 +328,7 @@ resource "azurerm_private_dns_a_record" "cosmos_db" {
 }
 
 resource "azurerm_private_dns_a_record" "sql_server" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "sql") ? 1 : 0
   name                = azurerm_mssql_server.main.name
   zone_name           = var.private_dns_zone_names["sql"]
   resource_group_name = var.resource_group_name
@@ -334,7 +338,7 @@ resource "azurerm_private_dns_a_record" "sql_server" {
 }
 
 resource "azurerm_private_dns_a_record" "redis" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "storage") ? 1 : 0
   name                = azurerm_redis_cache.main.name
   zone_name           = var.private_dns_zone_names["storage"]
   resource_group_name = var.resource_group_name

@@ -76,6 +76,19 @@ variable "log_analytics_workspace_id" {
   default     = ""
 }
 
+variable "application_insights_id" {
+  description = "ID of the Application Insights instance"
+  type        = string
+  default     = ""
+}
+
+variable "application_insights_instrumentation_key" {
+  description = "Instrumentation key for Application Insights"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
 variable "enable_private_endpoints" {
   description = "Enable private endpoints for services"
   type        = bool

@@ -5,7 +5,6 @@ resource "azurerm_iothub" "main" {
   name                = "${var.project_name}-${var.environment}-iothub-${var.suffix}"
   resource_group_name = var.resource_group_name
   location            = var.location
-  tags                = var.common_tags
 
   sku {
     name     = var.iot_hub_sku
@@ -46,13 +45,15 @@ resource "azurerm_iothub" "main" {
   }
 
   enrichment {
-    key   = "tenant"
-    value = var.environment
+    key            = "tenant"
+    value          = var.environment
+    endpoint_names = ["events"]
   }
 
   enrichment {
-    key   = "deviceLocation"
-    value = "$twin.tags.location"
+    key            = "deviceLocation"
+    value          = "$twin.tags.location"
+    endpoint_names = ["events"]
   }
 
   cloud_to_device {
@@ -60,7 +61,6 @@ resource "azurerm_iothub" "main" {
     default_ttl        = "PT1H"
     feedback {
       lock_duration = "PT5M"
-      ttl           = "PT1H"
       max_delivery_count = 10
     }
   }
@@ -80,12 +80,11 @@ resource "azurerm_iothub_consumer_group" "main" {
 
 # Storage Account for IoT Hub
 resource "azurerm_storage_account" "iot_hub" {
-  name                     = "${var.project_name}${var.environment}iothub${var.suffix}"
+  name                     = "${substr(replace(var.project_name, "-", ""), 0, 6)}${var.environment}iot${substr(replace(var.suffix, "-", ""), 0, 6)}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  tags                     = var.common_tags
 }
 
 resource "azurerm_storage_container" "iot_hub" {
@@ -101,7 +100,6 @@ resource "azurerm_eventhub_namespace" "main" {
   resource_group_name = var.resource_group_name
   sku                 = "Standard"
   capacity            = 1
-  tags                = var.common_tags
 
   identity {
     type = "SystemAssigned"
@@ -115,7 +113,6 @@ resource "azurerm_eventhub" "main" {
   resource_group_name = var.resource_group_name
   partition_count     = 4
   message_retention   = 1
-  tags                = var.common_tags
 }
 
 # Event Hub Authorization Rule
@@ -146,7 +143,6 @@ resource "azurerm_servicebus_namespace" "main" {
   location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = "Standard"
-  tags                = var.common_tags
 
   identity {
     type = "SystemAssigned"
@@ -157,7 +153,6 @@ resource "azurerm_servicebus_namespace" "main" {
 resource "azurerm_servicebus_queue" "alerts" {
   name         = "alerts"
   namespace_id = azurerm_servicebus_namespace.main.id
-  tags         = var.common_tags
 
   enable_partitioning = false
   max_size_in_megabytes = 1024
@@ -172,7 +167,6 @@ resource "azurerm_servicebus_queue" "alerts" {
 resource "azurerm_servicebus_queue" "commands" {
   name         = "commands"
   namespace_id = azurerm_servicebus_namespace.main.id
-  tags         = var.common_tags
 
   enable_partitioning = false
   max_size_in_megabytes = 1024
@@ -187,7 +181,6 @@ resource "azurerm_servicebus_queue" "commands" {
 resource "azurerm_servicebus_topic" "notifications" {
   name         = "notifications"
   namespace_id = azurerm_servicebus_namespace.main.id
-  tags         = var.common_tags
 
   enable_partitioning = false
   max_size_in_megabytes = 1024
@@ -201,7 +194,6 @@ resource "azurerm_servicebus_topic" "notifications" {
 resource "azurerm_servicebus_subscription" "email" {
   name     = "email"
   topic_id = azurerm_servicebus_topic.notifications.id
-  tags     = var.common_tags
 
   max_delivery_count = 10
   dead_lettering_on_filter_evaluation_error = true
@@ -214,7 +206,6 @@ resource "azurerm_servicebus_subscription" "email" {
 resource "azurerm_servicebus_subscription" "sms" {
   name     = "sms"
   topic_id = azurerm_servicebus_topic.notifications.id
-  tags     = var.common_tags
 
   max_delivery_count = 10
   dead_lettering_on_filter_evaluation_error = true
@@ -239,7 +230,6 @@ resource "azurerm_private_endpoint" "iot_hub" {
   location            = var.location
   resource_group_name = var.resource_group_name
   subnet_id           = var.subnet_ids["private-integration"]
-  tags                = var.common_tags
 
   private_service_connection {
     name                           = "iothub-connection"
@@ -255,7 +245,6 @@ resource "azurerm_private_endpoint" "eventhub" {
   location            = var.location
   resource_group_name = var.resource_group_name
   subnet_id           = var.subnet_ids["private-integration"]
-  tags                = var.common_tags
 
   private_service_connection {
     name                           = "eventhub-connection"
@@ -271,7 +260,6 @@ resource "azurerm_private_endpoint" "servicebus" {
   location            = var.location
   resource_group_name = var.resource_group_name
   subnet_id           = var.subnet_ids["private-integration"]
-  tags                = var.common_tags
 
   private_service_connection {
     name                           = "servicebus-connection"
@@ -283,31 +271,28 @@ resource "azurerm_private_endpoint" "servicebus" {
 
 # Private DNS Records (if private endpoints enabled)
 resource "azurerm_private_dns_a_record" "iot_hub" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "servicebus") ? 1 : 0
   name                = azurerm_iothub.main.name
   zone_name           = var.private_dns_zone_names["servicebus"]
   resource_group_name = var.resource_group_name
   ttl                 = 300
   records             = [azurerm_private_endpoint.iot_hub[0].private_service_connection[0].private_ip_address]
-  tags                = var.common_tags
 }
 
 resource "azurerm_private_dns_a_record" "eventhub" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "servicebus") ? 1 : 0
   name                = azurerm_eventhub_namespace.main.name
   zone_name           = var.private_dns_zone_names["servicebus"]
   resource_group_name = var.resource_group_name
   ttl                 = 300
   records             = [azurerm_private_endpoint.eventhub[0].private_service_connection[0].private_ip_address]
-  tags                = var.common_tags
 }
 
 resource "azurerm_private_dns_a_record" "servicebus" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "servicebus") ? 1 : 0
   name                = azurerm_servicebus_namespace.main.name
   zone_name           = var.private_dns_zone_names["servicebus"]
   resource_group_name = var.resource_group_name
   ttl                 = 300
   records             = [azurerm_private_endpoint.servicebus[0].private_service_connection[0].private_ip_address]
-  tags                = var.common_tags
 }

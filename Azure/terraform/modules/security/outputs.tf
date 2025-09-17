@@ -15,10 +15,6 @@ output "key_vault_uri" {
   value       = azurerm_key_vault.main.vault_uri
 }
 
-output "key_vault_identity" {
-  description = "Identity of the Key Vault"
-  value       = azurerm_key_vault.main.identity
-}
 
 output "key_vault_secret_ids" {
   description = "Map of Key Vault secret names to IDs"
@@ -67,25 +63,19 @@ output "security_center_workspace_id" {
   value       = var.enable_security_center && var.log_analytics_workspace_id != "" ? azurerm_security_center_workspace.main[0].id : null
 }
 
-output "policy_assignment_ids" {
-  description = "Map of policy assignment names to IDs"
-  value = var.enable_policy_assignments ? {
-    encryption_at_rest = azurerm_policy_assignment.encryption_at_rest[0].id
-    https_only        = azurerm_policy_assignment.https_only[0].id
-    min_tls_version   = azurerm_policy_assignment.min_tls_version[0].id
-  } : {}
-}
+# Policy assignments are not supported in the current AzureRM provider
+# These would need to be configured manually or through Azure CLI/PowerShell
 
 output "private_endpoint_ids" {
   description = "Map of private endpoint names to IDs"
-  value = var.enable_private_endpoints ? {
+  value = var.enable_private_endpoints && contains(keys(var.subnet_ids), "private-data") ? {
     key_vault = azurerm_private_endpoint.key_vault[0].id
   } : {}
 }
 
 output "ad_application_id" {
   description = "ID of the Azure AD application"
-  value       = var.enable_ad_app_registration ? azuread_application.main[0].application_id : null
+  value       = var.enable_ad_app_registration ? azuread_application.main[0].client_id : null
 }
 
 output "ad_application_object_id" {

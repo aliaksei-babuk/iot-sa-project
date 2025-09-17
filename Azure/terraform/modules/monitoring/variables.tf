@@ -30,17 +30,7 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "function_app_ids" {
-  description = "Map of function app names to IDs"
-  type        = map(string)
-  default     = {}
-}
-
-variable "container_app_ids" {
-  description = "Map of container app names to IDs"
-  type        = map(string)
-  default     = {}
-}
+# Note: Removed function_app_ids and container_app_ids as all services now use single Application Insights
 
 variable "iot_hub_id" {
   description = "ID of the IoT Hub"
@@ -110,4 +100,22 @@ variable "enable_dashboard" {
   description = "Enable monitoring dashboard"
   type        = bool
   default     = true
+}
+
+variable "enable_cosmos_db_alerts" {
+  description = "Enable Cosmos DB monitoring alerts"
+  type        = bool
+  default     = false
+}
+
+variable "enable_sql_database_alerts" {
+  description = "Enable SQL Database monitoring alerts"
+  type        = bool
+  default     = false
+}
+
+variable "enable_iot_hub_alerts" {
+  description = "Enable IoT Hub monitoring alerts"
+  type        = bool
+  default     = false
 }

@@ -114,7 +114,6 @@ resource "azurerm_cdn_frontdoor_profile" "main" {
 resource "azurerm_cdn_frontdoor_origin_group" "main" {
   name                     = "${var.project_name}-${var.environment}-fd-og-${var.suffix}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.main.id
-  tags                     = var.common_tags
 
   load_balancing {
     sample_size                        = 4
@@ -141,7 +140,7 @@ resource "azurerm_cdn_frontdoor_origin" "api_management" {
   origin_host_header            = azurerm_api_management.main.gateway_url
   priority                      = 1
   weight                        = 1000
-  tags                          = var.common_tags
+  certificate_name_check_enabled = true
 
   private_link {
     request_message        = "Request access for API Management"
@@ -153,9 +152,8 @@ resource "azurerm_cdn_frontdoor_origin" "api_management" {
 
 # Front Door Endpoint
 resource "azurerm_cdn_frontdoor_endpoint" "main" {
-  name                     = "${var.project_name}-${var.environment}-fd-endpoint-${var.suffix}"
+  name                     = "${substr(var.project_name, 0, 6)}${var.environment}fd${substr(var.suffix, 0, 6)}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.main.id
-  tags                     = var.common_tags
 }
 
 # Front Door Route
@@ -169,7 +167,6 @@ resource "azurerm_cdn_frontdoor_route" "main" {
   https_redirect_enabled        = true
   patterns_to_match             = ["/*"]
   supported_protocols           = ["Http", "Https"]
-  tags                          = var.common_tags
 
   cache {
     query_string_caching_behavior = "IgnoreQueryString"
@@ -183,7 +180,6 @@ resource "azurerm_cdn_frontdoor_route" "main" {
 resource "azurerm_cdn_frontdoor_security_policy" "main" {
   name                     = "${var.project_name}-${var.environment}-fd-security-${var.suffix}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.main.id
-  tags                     = var.common_tags
 
   security_policies {
     firewall {
@@ -201,7 +197,7 @@ resource "azurerm_cdn_frontdoor_security_policy" "main" {
 
 # Front Door Firewall Policy
 resource "azurerm_cdn_frontdoor_firewall_policy" "main" {
-  name                              = "${var.project_name}-${var.environment}-fd-waf-${var.suffix}"
+  name                              = "iot${var.environment}fdwaf${substr(replace(var.suffix, "-", ""), 0, 6)}"
   resource_group_name               = var.resource_group_name
   sku_name                          = azurerm_cdn_frontdoor_profile.main.sku_name
   enabled                           = true
@@ -293,8 +289,6 @@ resource "azurerm_linux_web_app" "api" {
     always_on = false
     ftps_state = "Disabled"
     http2_enabled = true
-    min_tls_version = "1.2"
-    scm_min_tls_version = "1.2"
   }
 
   app_settings = {
@@ -327,8 +321,6 @@ resource "azurerm_linux_web_app" "dashboard" {
     always_on = false
     ftps_state = "Disabled"
     http2_enabled = true
-    min_tls_version = "1.2"
-    scm_min_tls_version = "1.2"
   }
 
   app_settings = {
@@ -365,9 +357,9 @@ resource "azurerm_private_endpoint" "api_management" {
 
 # Private DNS Record for API Management (if private endpoints enabled)
 resource "azurerm_private_dns_a_record" "api_management" {
-  count               = var.enable_private_endpoints ? 1 : 0
+  count               = var.enable_private_endpoints && contains(keys(var.private_dns_zone_names), "apimanagement") ? 1 : 0
   name                = azurerm_api_management.main.name
-  zone_name           = var.private_dns_zone_names["servicebus"]
+  zone_name           = var.private_dns_zone_names["apimanagement"]
   resource_group_name = var.resource_group_name
   ttl                 = 300
   records             = [azurerm_private_endpoint.api_management[0].private_service_connection[0].private_ip_address]
