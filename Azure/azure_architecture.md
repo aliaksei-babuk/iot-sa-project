@@ -765,3 +765,4 @@ graph TB
 - [Azure IoT Sustainability Solution](https://learn.microsoft.com/en-us/azure/architecture/solution-ideas/articles/project-15-iot-sustainability)
 - [Azure Architecture Center](https://learn.microsoft.com/en-us/azure/architecture/)
 - [Azure IoT Hub Documentation](https://learn.microsoft.com/en-us/azure/iot-hub/)
+- [Samples for the Azure IoT Hub Device SDK](https://github.com/Azure/azure-iot-sdk-python/tree/main/samples)

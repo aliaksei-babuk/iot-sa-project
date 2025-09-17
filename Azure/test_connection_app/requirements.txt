@@ -1,0 +1,5 @@
+# Azure IoT Device SDK for Python
+azure-iot-device>=2.14.0
+
+# Additional dependencies that may be required
+azure-iot-hub>=0.11.1
