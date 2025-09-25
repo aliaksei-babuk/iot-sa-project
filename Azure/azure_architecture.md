@@ -766,3 +766,6 @@ graph TB
 - [Azure Architecture Center](https://learn.microsoft.com/en-us/azure/architecture/)
 - [Azure IoT Hub Documentation](https://learn.microsoft.com/en-us/azure/iot-hub/)
 - [Samples for the Azure IoT Hub Device SDK](https://github.com/Azure/azure-iot-sdk-python/tree/main/samples)
+- [Capture and Analyze Brain Waves with Azure IoT Hub](https://learn.microsoft.com/en-us/archive/msdn-magazine/2016/november/azure-iot-hub-capture-and-analyze-brain-waves-with-azure-iot-hub)
+- [Analyze and visualize your IoT data](https://learn.microsoft.com/en-us/azure/iot/iot-overview-analyze-visualize?tabs=edge)
+https://sandervandevelde.wordpress.com/2021/06/15/cloud-iot-dashboards-using-grafana-with-azure-iot/gg
